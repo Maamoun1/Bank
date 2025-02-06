@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "EeYYSn5RS4oxRkVOai5hCV2QpxXPjg1hskg824YCFZ4=",
+  "Source": "ApiBank",
+  "BasePath": "_content/ApiBank",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

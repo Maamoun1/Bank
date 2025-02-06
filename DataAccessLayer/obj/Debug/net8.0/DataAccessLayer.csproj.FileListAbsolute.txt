@@ -1,0 +1,14 @@
+E:\Courses\Programming\New Project\DataAccessLayer\bin\Debug\net8.0\DataAccessLayer.deps.json
+E:\Courses\Programming\New Project\DataAccessLayer\bin\Debug\net8.0\DataAccessLayer.runtimeconfig.json
+E:\Courses\Programming\New Project\DataAccessLayer\bin\Debug\net8.0\DataAccessLayer.dll
+E:\Courses\Programming\New Project\DataAccessLayer\bin\Debug\net8.0\DataAccessLayer.pdb
+E:\Courses\Programming\New Project\DataAccessLayer\obj\Debug\net8.0\DataAccessLayer.csproj.AssemblyReference.cache
+E:\Courses\Programming\New Project\DataAccessLayer\obj\Debug\net8.0\DataAccessLayer.GeneratedMSBuildEditorConfig.editorconfig
+E:\Courses\Programming\New Project\DataAccessLayer\obj\Debug\net8.0\DataAccessLayer.AssemblyInfoInputs.cache
+E:\Courses\Programming\New Project\DataAccessLayer\obj\Debug\net8.0\DataAccessLayer.AssemblyInfo.cs
+E:\Courses\Programming\New Project\DataAccessLayer\obj\Debug\net8.0\DataAccessLayer.csproj.CoreCompileInputs.cache
+E:\Courses\Programming\New Project\DataAccessLayer\obj\Debug\net8.0\DataAccessLayer.dll
+E:\Courses\Programming\New Project\DataAccessLayer\obj\Debug\net8.0\refint\DataAccessLayer.dll
+E:\Courses\Programming\New Project\DataAccessLayer\obj\Debug\net8.0\DataAccessLayer.pdb
+E:\Courses\Programming\New Project\DataAccessLayer\obj\Debug\net8.0\DataAccessLayer.genruntimeconfig.cache
+E:\Courses\Programming\New Project\DataAccessLayer\obj\Debug\net8.0\ref\DataAccessLayer.dll

@@ -1,0 +1,239 @@
+[
+  {
+    "ContainingType": "ApiBank.Controllers.Account_Type.AccountsTypesController",
+    "Method": "GetAll",
+    "RelativePath": "api/AccountsTypes/GetAll",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.Applications.ApplicationController",
+    "Method": "GetAll",
+    "RelativePath": "api/Application/GetAll",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.Applications.ApplicationController",
+    "Method": "GetUserByID",
+    "RelativePath": "api/Application/GetByID{applicationId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "applicationId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "EndpointName": "GetApplicationByID"
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.People.PersonController",
+    "Method": "AddPerson",
+    "RelativePath": "api/Person",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "BusinessLayer.DTOs.People.CreatePersonDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "EndpointName": "AddPerson"
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.People.PersonController",
+    "Method": "UpdatePerson",
+    "RelativePath": "api/Person",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "personID",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "dto",
+        "Type": "BusinessLayer.DTOs.People.UpdatePersonDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "EndpointName": "UpdatePerson"
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.People.PersonController",
+    "Method": "DeletePerson",
+    "RelativePath": "api/Person/Delete{personID}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "personID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "EndpointName": "DeletePerson"
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.People.PersonController",
+    "Method": "GetAll",
+    "RelativePath": "api/Person/GetAll",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.People.PersonController",
+    "Method": "GetPersonByID",
+    "RelativePath": "api/Person/GetByID{personID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "personID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "EndpointName": "GetPersonByID"
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.People.PersonController",
+    "Method": "IsPersonExist",
+    "RelativePath": "api/Person/IsExist{personID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "personID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "EndpointName": "IsPersonExist"
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.User.UserController",
+    "Method": "AddPerson",
+    "RelativePath": "api/User",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "BusinessLayer.DTOs.User.CreateUserDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "EndpointName": "AddUser"
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.User.UserController",
+    "Method": "UpdateUser",
+    "RelativePath": "api/User",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "dto",
+        "Type": "BusinessLayer.DTOs.User.UpdateUserDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "EndpointName": "UpdateUser"
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.User.UserController",
+    "Method": "DeletePerson",
+    "RelativePath": "api/User/Delete{userId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "EndpointName": "DeleteUser"
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.User.UserController",
+    "Method": "GetAll",
+    "RelativePath": "api/User/GetAll",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.User.UserController",
+    "Method": "GetUserByID",
+    "RelativePath": "api/User/GetByID{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "EndpointName": "GetUserByID"
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.User.UserController",
+    "Method": "IsExist",
+    "RelativePath": "api/User/IsExist{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "EndpointName": "IsUserExist"
+  }
+]

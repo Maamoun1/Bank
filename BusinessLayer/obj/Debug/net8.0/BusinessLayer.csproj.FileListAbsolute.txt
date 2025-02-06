@@ -1,0 +1,15 @@
+E:\Courses\Programming\New Project\BusinessLayer\bin\Debug\net8.0\BusinessLayer.deps.json
+E:\Courses\Programming\New Project\BusinessLayer\bin\Debug\net8.0\BusinessLayer.dll
+E:\Courses\Programming\New Project\BusinessLayer\bin\Debug\net8.0\BusinessLayer.pdb
+E:\Courses\Programming\New Project\BusinessLayer\bin\Debug\net8.0\DataAccessLayer.dll
+E:\Courses\Programming\New Project\BusinessLayer\bin\Debug\net8.0\DataAccessLayer.pdb
+E:\Courses\Programming\New Project\BusinessLayer\obj\Debug\net8.0\BusinessLayer.csproj.AssemblyReference.cache
+E:\Courses\Programming\New Project\BusinessLayer\obj\Debug\net8.0\BusinessLayer.GeneratedMSBuildEditorConfig.editorconfig
+E:\Courses\Programming\New Project\BusinessLayer\obj\Debug\net8.0\BusinessLayer.AssemblyInfoInputs.cache
+E:\Courses\Programming\New Project\BusinessLayer\obj\Debug\net8.0\BusinessLayer.AssemblyInfo.cs
+E:\Courses\Programming\New Project\BusinessLayer\obj\Debug\net8.0\BusinessLayer.csproj.CoreCompileInputs.cache
+E:\Courses\Programming\New Project\BusinessLayer\obj\Debug\net8.0\Business.EA331CBA.Up2Date
+E:\Courses\Programming\New Project\BusinessLayer\obj\Debug\net8.0\BusinessLayer.dll
+E:\Courses\Programming\New Project\BusinessLayer\obj\Debug\net8.0\refint\BusinessLayer.dll
+E:\Courses\Programming\New Project\BusinessLayer\obj\Debug\net8.0\BusinessLayer.pdb
+E:\Courses\Programming\New Project\BusinessLayer\obj\Debug\net8.0\ref\BusinessLayer.dll
