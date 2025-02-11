@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Courses\\Programming\\New Project\\Bank\\ApiBank.csproj": {}
+    "E:\\MyOwnGithub\\Bank\\BankApi\\ApiBank.csproj": {}
   },
   "projects": {
-    "E:\\Courses\\Programming\\New Project\\Bank\\ApiBank.csproj": {
+    "E:\\MyOwnGithub\\Bank\\BankApi\\ApiBank.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Courses\\Programming\\New Project\\Bank\\ApiBank.csproj",
+        "projectUniqueName": "E:\\MyOwnGithub\\Bank\\BankApi\\ApiBank.csproj",
         "projectName": "ApiBank",
-        "projectPath": "E:\\Courses\\Programming\\New Project\\Bank\\ApiBank.csproj",
+        "projectPath": "E:\\MyOwnGithub\\Bank\\BankApi\\ApiBank.csproj",
         "packagesPath": "C:\\Users\\high link\\.nuget\\packages\\",
-        "outputPath": "E:\\Courses\\Programming\\New Project\\Bank\\obj\\",
+        "outputPath": "E:\\MyOwnGithub\\Bank\\BankApi\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -32,8 +32,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "E:\\Courses\\Programming\\New Project\\BusinessLayer\\BusinessLayer.csproj": {
-                "projectPath": "E:\\Courses\\Programming\\New Project\\BusinessLayer\\BusinessLayer.csproj"
+              "E:\\MyOwnGithub\\Bank\\BusinessLayer\\BusinessLayer.csproj": {
+                "projectPath": "E:\\MyOwnGithub\\Bank\\BusinessLayer\\BusinessLayer.csproj"
               }
             }
           }
@@ -104,14 +104,14 @@
         }
       }
     },
-    "E:\\Courses\\Programming\\New Project\\BusinessLayer\\BusinessLayer.csproj": {
+    "E:\\MyOwnGithub\\Bank\\BusinessLayer\\BusinessLayer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Courses\\Programming\\New Project\\BusinessLayer\\BusinessLayer.csproj",
+        "projectUniqueName": "E:\\MyOwnGithub\\Bank\\BusinessLayer\\BusinessLayer.csproj",
         "projectName": "BusinessLayer",
-        "projectPath": "E:\\Courses\\Programming\\New Project\\BusinessLayer\\BusinessLayer.csproj",
+        "projectPath": "E:\\MyOwnGithub\\Bank\\BusinessLayer\\BusinessLayer.csproj",
         "packagesPath": "C:\\Users\\high link\\.nuget\\packages\\",
-        "outputPath": "E:\\Courses\\Programming\\New Project\\BusinessLayer\\obj\\",
+        "outputPath": "E:\\MyOwnGithub\\Bank\\BusinessLayer\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -132,8 +132,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "E:\\Courses\\Programming\\New Project\\DataAccessLayer\\DataAccessLayer.csproj": {
-                "projectPath": "E:\\Courses\\Programming\\New Project\\DataAccessLayer\\DataAccessLayer.csproj"
+              "E:\\MyOwnGithub\\Bank\\DataAccessLayer\\DataAccessLayer.csproj": {
+                "projectPath": "E:\\MyOwnGithub\\Bank\\DataAccessLayer\\DataAccessLayer.csproj"
               }
             }
           }
@@ -173,14 +173,14 @@
         }
       }
     },
-    "E:\\Courses\\Programming\\New Project\\DataAccessLayer\\DataAccessLayer.csproj": {
+    "E:\\MyOwnGithub\\Bank\\DataAccessLayer\\DataAccessLayer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Courses\\Programming\\New Project\\DataAccessLayer\\DataAccessLayer.csproj",
+        "projectUniqueName": "E:\\MyOwnGithub\\Bank\\DataAccessLayer\\DataAccessLayer.csproj",
         "projectName": "DataAccessLayer",
-        "projectPath": "E:\\Courses\\Programming\\New Project\\DataAccessLayer\\DataAccessLayer.csproj",
+        "projectPath": "E:\\MyOwnGithub\\Bank\\DataAccessLayer\\DataAccessLayer.csproj",
         "packagesPath": "C:\\Users\\high link\\.nuget\\packages\\",
-        "outputPath": "E:\\Courses\\Programming\\New Project\\DataAccessLayer\\obj\\",
+        "outputPath": "E:\\MyOwnGithub\\Bank\\DataAccessLayer\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

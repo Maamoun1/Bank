@@ -15,6 +15,7 @@ namespace DataAccessLayer.Respository
 
         public UnitOfWork(DbContext.ApplicationDbContext context)
         {
+
             _context = context;
 
             Person = new PersonRepository(_context);
@@ -22,6 +23,8 @@ namespace DataAccessLayer.Respository
             User = new UserRepository(_context);
 
             Applications = new ApplicationsRepository(_context);
+
+            Account  = new AccountRepository(_context);
         }
 
         public IPersonRepostitory Person { get; private set; }
@@ -31,6 +34,8 @@ namespace DataAccessLayer.Respository
         public IAccountsTypesRepository AccountType { get; private set; }
 
         public IApplicationsRepository Applications { get; private set; }
+
+        public IAccountRepository Account { get; private set; }
 
         public async Task SaveAsync()
         {

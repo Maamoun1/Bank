@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DataAccessLayer.Entities;
 
-public partial class TbAccount
+public  class TbAccount
 {
     public int AccountId { get; set; }
 

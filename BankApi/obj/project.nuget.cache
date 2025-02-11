@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "vG/Sp7vz18A=",
+  "dgSpecHash": "N4MOmxr3nGM=",
   "success": true,
-  "projectFilePath": "E:\\Courses\\Programming\\New Project\\Bank\\ApiBank.csproj",
+  "projectFilePath": "E:\\MyOwnGithub\\Bank\\BankApi\\ApiBank.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\high link\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\high link\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

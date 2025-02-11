@@ -11,7 +11,7 @@ namespace BusinessLayer.Service.IService
     {
         IQueryable<T> GetAllQueryable(string? includeProperties = null, bool tracked = false); //IQueryable<T>
 
-        Task<IEnumerable<T>> GetAllAsyncc(string? includeProperties = null, bool tracked = false); //Task<IEnumerable<T>>
+        Task<IEnumerable<T>> GetAllAsync(string? includeProperties = null, bool tracked = false); //Task<IEnumerable<T>>
 
         IQueryable<T> FindAllQueryable(Expression<Func<T, bool>> predicate, string? includeProperties = null, bool tracked = false);
 

@@ -14,12 +14,12 @@ namespace BusinessLayer.Service
     {
 
         private readonly IGenericRepository<T> _Repository;
-        
+
         public GenericService(IGenericRepository<T> repository)
         {
             _Repository = repository;
         }
-       
+        
         public virtual async Task AddAsync(T Entity)
         {
             await _Repository.AddAsync(Entity);
@@ -35,7 +35,7 @@ namespace BusinessLayer.Service
            return _Repository.FindAllQueryable(predicate, includeProperties, tracked);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsyncc(string? includeProperties = null, bool tracked = false)
+        public async Task<IEnumerable<T>> GetAllAsync(string? includeProperties = null, bool tracked = false)
         {
             
             return await _Repository.GetAllAsync(includeProperties, tracked);

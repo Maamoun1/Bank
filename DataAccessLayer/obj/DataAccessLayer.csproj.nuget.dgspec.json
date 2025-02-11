@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Courses\\Programming\\New Project\\DataAccessLayer\\DataAccessLayer.csproj": {}
+    "E:\\MyOwnGithub\\Bank\\DataAccessLayer\\DataAccessLayer.csproj": {}
   },
   "projects": {
-    "E:\\Courses\\Programming\\New Project\\DataAccessLayer\\DataAccessLayer.csproj": {
+    "E:\\MyOwnGithub\\Bank\\DataAccessLayer\\DataAccessLayer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Courses\\Programming\\New Project\\DataAccessLayer\\DataAccessLayer.csproj",
+        "projectUniqueName": "E:\\MyOwnGithub\\Bank\\DataAccessLayer\\DataAccessLayer.csproj",
         "projectName": "DataAccessLayer",
-        "projectPath": "E:\\Courses\\Programming\\New Project\\DataAccessLayer\\DataAccessLayer.csproj",
+        "projectPath": "E:\\MyOwnGithub\\Bank\\DataAccessLayer\\DataAccessLayer.csproj",
         "packagesPath": "C:\\Users\\high link\\.nuget\\packages\\",
-        "outputPath": "E:\\Courses\\Programming\\New Project\\DataAccessLayer\\obj\\",
+        "outputPath": "E:\\MyOwnGithub\\Bank\\DataAccessLayer\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

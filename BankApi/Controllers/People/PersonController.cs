@@ -25,7 +25,7 @@ namespace ApiBank.Controllers.People
             try
             {
 
-                var lstPeople = await _personService.GetAllAsyncc();
+                var lstPeople = await _personService.GetAllAsync();
                 return Ok(new { success = true, data = lstPeople });
             }
 
@@ -49,7 +49,7 @@ namespace ApiBank.Controllers.People
                 }
 
                 var Student = await _personService.GetAsync(p => p.PersonId == personID, "NationalityCountry");
-
+                
                 if (Student != null)
                 {
                     ReterivePersonDto reterivePersondto = new ReterivePersonDto()

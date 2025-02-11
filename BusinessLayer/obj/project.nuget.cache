@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "3ZRNdetfu94=",
+  "dgSpecHash": "Qh1u44wj428=",
   "success": true,
-  "projectFilePath": "E:\\Courses\\Programming\\New Project\\BusinessLayer\\BusinessLayer.csproj",
+  "projectFilePath": "E:\\MyOwnGithub\\Bank\\BusinessLayer\\BusinessLayer.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\high link\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\high link\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

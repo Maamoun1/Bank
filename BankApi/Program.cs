@@ -26,6 +26,8 @@ builder.Services.AddScoped(typeof(IGenericeService<>), typeof(GenericService<>))
 builder.Services.AddScoped<IPersonRepostitory, PersonRepository>();
 builder.Services.AddScoped<IApplicationsRepository, ApplicationsRepository>();
 builder.Services.AddScoped<IApplicationService, ApplicationService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountTypeService, AccountTypeService>();
 builder.Services.AddScoped<IAccountsTypesRepository, AccountTypeRepository>();
 builder.Services.AddScoped<IPersonService, PersonService>();

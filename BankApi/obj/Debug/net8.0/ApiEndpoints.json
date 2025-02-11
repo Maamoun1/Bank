@@ -1,13 +1,103 @@
 [
   {
-    "ContainingType": "ApiBank.Controllers.Account_Type.AccountsTypesController",
+    "ContainingType": "ApiBank.Controllers.Account.AccountsController",
+    "Method": "AddAccount",
+    "RelativePath": "api/Accounts",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "BusinessLayer.DTOs.Accounts.CreateAccountDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "EndpointName": "AddAccount"
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.Account.AccountsController",
+    "Method": "UpdateAccount",
+    "RelativePath": "api/Accounts",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pinCode",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "dto",
+        "Type": "BusinessLayer.DTOs.Accounts.UpdatePassword",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "EndpointName": "UpdateAccount"
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.Account.AccountsController",
     "Method": "GetAll",
-    "RelativePath": "api/AccountsTypes/GetAll",
+    "RelativePath": "api/Accounts/GetAll",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.Account.AccountsController",
+    "Method": "GetAccountByID",
+    "RelativePath": "api/Accounts/GetByID/{accountId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "accountId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "EndpointName": "GetAccountByID"
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.Account.AccountsController",
+    "Method": "GetPassword",
+    "RelativePath": "api/Accounts/GetPassword/{pinCode}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pinCode",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "EndpointName": "GetPassword"
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.Applications.ApplicationController",
+    "Method": "Add",
+    "RelativePath": "api/Application",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "BusinessLayer.DTOs.Applications.CreateApplicationDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "EndpointName": "AddApplication"
   },
   {
     "ContainingType": "ApiBank.Controllers.Applications.ApplicationController",

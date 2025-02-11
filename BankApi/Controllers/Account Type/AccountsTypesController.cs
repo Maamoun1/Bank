@@ -18,22 +18,7 @@ namespace ApiBank.Controllers.Account_Type
             _accountType = accountsTypes;
         }
 
-        [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll()
-        {
-            try
-            {
-
-                var lastAccountsTypes = await _accountType.GetAccountTypeAsync();
-
-                return Ok(new { success = true, data = lastAccountsTypes });
-            }
-
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { success = false, message = "An Error Occurred while retriving Accounts Types." });
-            }
-        }
+     
 
 
 

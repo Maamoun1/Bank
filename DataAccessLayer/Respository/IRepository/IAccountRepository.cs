@@ -6,15 +6,12 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Respository.IRepository
 {
-    public class IAccountRepository
+    public interface IAccountRepository : IGenericRepository<TbAccount>
     {
+        Task DecativeAccount(int  accountId);
 
-
-
-
-
-
-
+        bool IsAccountExist(string pinCode);
+        void Update(TbAccount account); 
 
     }
 }
