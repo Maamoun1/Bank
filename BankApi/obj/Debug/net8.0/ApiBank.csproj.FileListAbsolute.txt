@@ -154,15 +154,11 @@ E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ApiBank.GeneratedMSBuildEditorConfi
 E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ApiBank.AssemblyInfoInputs.cache
 E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ApiBank.AssemblyInfo.cs
 E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ApiBank.csproj.CoreCompileInputs.cache
-E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ApiBank.MvcApplicationPartsAssemblyInfo.cs
 E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ApiBank.MvcApplicationPartsAssemblyInfo.cache
 E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ApiBank.sourcelink.json
-E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ApiBank.dll
-E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\refint\ApiBank.dll
-E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ApiBank.pdb
 E:\MyOwnGithub\Bank\BankApi\bin\Debug\net8.0\appsettings.Development.json
-E:\MyOwnGithub\Bank\BankApi\bin\Debug\net8.0\ApiBank.staticwebassets.endpoints.json
 E:\MyOwnGithub\Bank\BankApi\bin\Debug\net8.0\appsettings.json
+E:\MyOwnGithub\Bank\BankApi\bin\Debug\net8.0\ApiBank.staticwebassets.endpoints.json
 E:\MyOwnGithub\Bank\BankApi\bin\Debug\net8.0\ApiBank.exe
 E:\MyOwnGithub\Bank\BankApi\bin\Debug\net8.0\ApiBank.deps.json
 E:\MyOwnGithub\Bank\BankApi\bin\Debug\net8.0\ApiBank.runtimeconfig.json
@@ -421,5 +417,8 @@ E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\staticwebassets\msbuild.buildTransi
 E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\staticwebassets.pack.json
 E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ApiBank.csproj.Up2Date
+E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ApiBank.dll
+E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\refint\ApiBank.dll
+E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ApiBank.pdb
 E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ApiBank.genruntimeconfig.cache
 E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ref\ApiBank.dll

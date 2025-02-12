@@ -19,13 +19,13 @@ E:\MyOwnGithub\Bank\BusinessLayer\obj\Debug\net8.0\BusinessLayer.AssemblyInfoInp
 E:\MyOwnGithub\Bank\BusinessLayer\obj\Debug\net8.0\BusinessLayer.AssemblyInfo.cs
 E:\MyOwnGithub\Bank\BusinessLayer\obj\Debug\net8.0\BusinessLayer.csproj.CoreCompileInputs.cache
 E:\MyOwnGithub\Bank\BusinessLayer\obj\Debug\net8.0\BusinessLayer.sourcelink.json
-E:\MyOwnGithub\Bank\BusinessLayer\obj\Debug\net8.0\BusinessLayer.dll
-E:\MyOwnGithub\Bank\BusinessLayer\obj\Debug\net8.0\refint\BusinessLayer.dll
-E:\MyOwnGithub\Bank\BusinessLayer\obj\Debug\net8.0\BusinessLayer.pdb
 E:\MyOwnGithub\Bank\BusinessLayer\bin\Debug\net8.0\BusinessLayer.deps.json
 E:\MyOwnGithub\Bank\BusinessLayer\bin\Debug\net8.0\BusinessLayer.dll
 E:\MyOwnGithub\Bank\BusinessLayer\bin\Debug\net8.0\BusinessLayer.pdb
 E:\MyOwnGithub\Bank\BusinessLayer\bin\Debug\net8.0\DataAccessLayer.dll
 E:\MyOwnGithub\Bank\BusinessLayer\bin\Debug\net8.0\DataAccessLayer.pdb
 E:\MyOwnGithub\Bank\BusinessLayer\obj\Debug\net8.0\Business.EA331CBA.Up2Date
+E:\MyOwnGithub\Bank\BusinessLayer\obj\Debug\net8.0\BusinessLayer.dll
+E:\MyOwnGithub\Bank\BusinessLayer\obj\Debug\net8.0\refint\BusinessLayer.dll
+E:\MyOwnGithub\Bank\BusinessLayer\obj\Debug\net8.0\BusinessLayer.pdb
 E:\MyOwnGithub\Bank\BusinessLayer\obj\Debug\net8.0\ref\BusinessLayer.dll

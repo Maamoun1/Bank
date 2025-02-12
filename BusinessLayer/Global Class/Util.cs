@@ -80,15 +80,17 @@ namespace BusinessLayer.Global_Class
         private const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
         public static  string password = "123456";
-        public static string GenerateRandomString(int length = 5)
+        public static string GenerateAccountNumber(int length = 12)
         {
+            const string digits = "0123456789";
             char[] result = new char[length];
+
+            Random random = new Random();
 
             for (int i = 0; i < length; i++)
             {
-                result[i] = chars[random.Next(chars.Length)];
+                result[i] = digits[random.Next(digits.Length)];
             }
-
             return new string(result);
         }
 

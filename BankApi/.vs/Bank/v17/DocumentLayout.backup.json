@@ -1,12 +1,116 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "E:\\MyOwnGithub\\Bank\\BankApi\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{90E43F9E-B58B-4072-8EC0-670A62721AA2}|ApiBank.csproj|e:\\myowngithub\\bank\\bankapi\\controllers\\user\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{90E43F9E-B58B-4072-8EC0-670A62721AA2}|ApiBank.csproj|solutionrelative:controllers\\user\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1705DE79-EFD4-468B-BB4A-80BCD9B53CFB}|..\\DataAccessLayer\\DataAccessLayer.csproj|e:\\myowngithub\\bank\\dataaccesslayer\\respository\\genericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1705DE79-EFD4-468B-BB4A-80BCD9B53CFB}|..\\DataAccessLayer\\DataAccessLayer.csproj|e:\\myowngithub\\bank\\dataaccesslayer\\respository\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{85FB0346-1BC8-4A6E-8AA7-4D90DBF522F2}|..\\BusinessLayer\\BusinessLayer.csproj|e:\\myowngithub\\bank\\businesslayer\\service\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1705DE79-EFD4-468B-BB4A-80BCD9B53CFB}|..\\DataAccessLayer\\DataAccessLayer.csproj|e:\\myowngithub\\bank\\dataaccesslayer\\entities\\tbperson.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{85FB0346-1BC8-4A6E-8AA7-4D90DBF522F2}|..\\BusinessLayer\\BusinessLayer.csproj|e:\\myowngithub\\bank\\businesslayer\\dtos\\user\\reteriveuserdto.cs||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 1,
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
+        {
+          "DockedHeight": 90,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ReteriveUserDto.cs",
+              "DocumentMoniker": "E:\\MyOwnGithub\\Bank\\BusinessLayer\\DTOs\\User\\ReteriveUserDto.cs",
+              "RelativeDocumentMoniker": "..\\BusinessLayer\\DTOs\\User\\ReteriveUserDto.cs",
+              "ToolTip": "E:\\MyOwnGithub\\Bank\\BusinessLayer\\DTOs\\User\\ReteriveUserDto.cs",
+              "RelativeToolTip": "..\\BusinessLayer\\DTOs\\User\\ReteriveUserDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-12T09:08:02.629Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "TbPerson.cs",
+              "DocumentMoniker": "E:\\MyOwnGithub\\Bank\\DataAccessLayer\\Entities\\TbPerson.cs",
+              "RelativeDocumentMoniker": "..\\DataAccessLayer\\Entities\\TbPerson.cs",
+              "ToolTip": "E:\\MyOwnGithub\\Bank\\DataAccessLayer\\Entities\\TbPerson.cs",
+              "RelativeToolTip": "..\\DataAccessLayer\\Entities\\TbPerson.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAAAYwCYAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-12T09:04:00.914Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "UserController.cs",
+              "DocumentMoniker": "E:\\MyOwnGithub\\Bank\\BankApi\\Controllers\\User\\UserController.cs",
+              "RelativeDocumentMoniker": "Controllers\\User\\UserController.cs",
+              "ToolTip": "E:\\MyOwnGithub\\Bank\\BankApi\\Controllers\\User\\UserController.cs*",
+              "RelativeToolTip": "Controllers\\User\\UserController.cs*",
+              "ViewState": "AgIAAC0AAAAAAAAAAAAmwDwAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-12T09:03:16.809Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "UserService.cs",
+              "DocumentMoniker": "E:\\MyOwnGithub\\Bank\\BusinessLayer\\Service\\UserService.cs",
+              "RelativeDocumentMoniker": "..\\BusinessLayer\\Service\\UserService.cs",
+              "ToolTip": "E:\\MyOwnGithub\\Bank\\BusinessLayer\\Service\\UserService.cs",
+              "RelativeToolTip": "..\\BusinessLayer\\Service\\UserService.cs",
+              "ViewState": "AgIAACEAAAAAAAAAAAAowBQAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-12T09:02:57.926Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "UserRepository.cs",
+              "DocumentMoniker": "E:\\MyOwnGithub\\Bank\\DataAccessLayer\\Respository\\UserRepository.cs",
+              "RelativeDocumentMoniker": "..\\DataAccessLayer\\Respository\\UserRepository.cs",
+              "ToolTip": "E:\\MyOwnGithub\\Bank\\DataAccessLayer\\Respository\\UserRepository.cs",
+              "RelativeToolTip": "..\\DataAccessLayer\\Respository\\UserRepository.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABQAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-12T09:02:47.711Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "GenericRepository.cs",
+              "DocumentMoniker": "E:\\MyOwnGithub\\Bank\\DataAccessLayer\\Respository\\GenericRepository.cs",
+              "RelativeDocumentMoniker": "..\\DataAccessLayer\\Respository\\GenericRepository.cs",
+              "ToolTip": "E:\\MyOwnGithub\\Bank\\DataAccessLayer\\Respository\\GenericRepository.cs",
+              "RelativeToolTip": "..\\DataAccessLayer\\Respository\\GenericRepository.cs",
+              "ViewState": "AgIAAEgAAAAAAAAAAAAcwFQAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-12T08:57:04.065Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
         {
           "DockedHeight": 90,
           "SelectedChildIndex": -1,

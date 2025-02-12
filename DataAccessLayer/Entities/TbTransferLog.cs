@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DataAccessLayer.Entities;
 
-public partial class TbTransferLog
+public  class TbTransferLog
 {
     public int TransferLogId { get; set; }
 

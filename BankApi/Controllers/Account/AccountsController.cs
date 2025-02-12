@@ -55,7 +55,7 @@ namespace ApiBank.Controllers.Account
                     ReteriveAccountDto reteriveAccountDto = new ReteriveAccountDto()
                     {
                         AccountId = accountId,
-                        PinCode = account.PinCode,
+                        AccountNumber = account.AccountNumber,
                         IssueReason = account.IssueReason,
                         Balance = account.Balance,
                         IsActive = account.IsActive,
@@ -73,6 +73,31 @@ namespace ApiBank.Controllers.Account
             catch (Exception ex)
             {
                 return StatusCode(500, new { success = false, message = "An Error Occurred while retriving an Account." });
+            }
+
+        }
+
+
+        [HttpGet("GetBalance/{accountNumber}", Name = "GetBalance")]
+        public async Task<IActionResult> GeBalance(string accountNumber)
+        {
+
+            try
+            {
+
+                if (accountNumber == "")
+                {
+                    return BadRequest($"Not Accepted ID: {accountNumber}");
+                }
+
+                double balance= _accountService.GetBalance(accountNumber);
+
+                return Ok(new { success = true, data = balance });
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = "An Error Occurred while retriving a balance." });
             }
 
         }
@@ -123,21 +148,70 @@ namespace ApiBank.Controllers.Account
         }
 
 
-        [HttpPut(Name = "UpdateAccount")]
-        public async Task<IActionResult> UpdateAccount(string pinCode, UpdatePassword dto)
+        [HttpPut("UpdateAccount")]
+        public async Task<IActionResult> UpdateAccount(string AccountNumber, UpdatePassword dto)
         {
 
-            if (pinCode =="")
-                return BadRequest($"Not Accepted ID: {pinCode}");
+            if (string.IsNullOrWhiteSpace(AccountNumber))
+                return BadRequest($"Not Accepted ID: {AccountNumber}");
 
-            if (!_accountService.IsAccountExist(pinCode))
+            if (!_accountService.IsAccountExist(AccountNumber))
                 NotFound("Account is not Found exist..");
 
-            await _accountService.UpdatePassword(pinCode, dto);
+            await _accountService.UpdatePassword(AccountNumber, dto);
             await _accountService.SaveChanges();
 
             return Ok(dto);
         }
+
+
+        [HttpPut("Deposite")]
+        public async Task<IActionResult>Deposite(string accountNumber, double balance)
+        {
+
+            if (string.IsNullOrWhiteSpace(accountNumber))
+              return  BadRequest($"Not Accepted {accountNumber}");
+
+            if (!_accountService.IsAccountExist(accountNumber))
+              return  NotFound("Account is not exist");
+
+             _accountService.Deposite(accountNumber, balance);
+             await _accountService.SaveChanges();
+
+            return Ok("Success deposite");
+        }
+
+         [HttpPut("Withdraw")]
+        public async Task<IActionResult>Withdraw(string accountNumber, double balance)
+        {
+
+            if (string.IsNullOrWhiteSpace(accountNumber))
+              return  BadRequest($"Not Accepted {accountNumber}");
+
+            if (!_accountService.IsAccountExist(accountNumber))
+              return  NotFound("Account is not exist");
+
+             _accountService.Withdraw(accountNumber, balance);
+             await _accountService.SaveChanges();
+
+            return Ok("Ahmed adel is a super hero");
+        }
+
+
+        [HttpPut("Transfer")]
+        public async Task<IActionResult> TransferAmount(string senderId,string receiverId, double balance)
+        {
+
+            if (await _accountService.TransferAmountAsync(senderId, receiverId, balance))
+            {
+                await _accountService.SaveChanges();
+                return Ok("Transfer Succeeded");
+            }
+
+            else
+                return NotFound("Transfer Failed..");
+        }
+
 
 
 

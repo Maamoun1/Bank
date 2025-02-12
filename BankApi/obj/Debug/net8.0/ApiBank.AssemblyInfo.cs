@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ApiBank")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3ec5ff5a151a7d5bddb9f9de185b1d6a856a62c9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f5fb8fe0c0354e1a19503eff06e30f0ae34b2e1b")]
 [assembly: System.Reflection.AssemblyProductAttribute("ApiBank")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ApiBank")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

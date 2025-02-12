@@ -22,6 +22,7 @@ builder.Configuration.GetSection("JWT");
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped(typeof(IReadOnlyRepostitory<>), typeof(ReadOnlyRepository<>));
+builder.Services.AddScoped(typeof(IReadOnlyService<>), typeof(ReadOnlyService<>));
 builder.Services.AddScoped(typeof(IGenericeService<>), typeof(GenericService<>));
 builder.Services.AddScoped<IPersonRepostitory, PersonRepository>();
 builder.Services.AddScoped<IApplicationsRepository, ApplicationsRepository>();

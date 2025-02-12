@@ -55,9 +55,8 @@ public partial class ApplicationDbContext : Microsoft.EntityFrameworkCore.DbCont
             entity.Property(e => e.ExpirationDate).HasColumnType("datetime");
             entity.Property(e => e.IssueDate).HasColumnType("datetime");
             entity.Property(e => e.IssueReason).HasMaxLength(50);
-            entity.Property(e => e.Password).HasMaxLength(50);
-            entity.Property(e => e.PinCode).HasMaxLength(40);
-
+            entity.Property(e => e.Password).HasColumnType("NVARCHAR(MAX)");
+            entity.Property(e => e.AccountNumber).HasMaxLength(40);
             entity.HasOne(d => d.Application).WithMany(p => p.Accounts)
                 .HasForeignKey(d => d.ApplicationId)
                 .OnDelete(DeleteBehavior.ClientSetNull)

@@ -18,25 +18,24 @@
   },
   {
     "ContainingType": "ApiBank.Controllers.Account.AccountsController",
-    "Method": "UpdateAccount",
-    "RelativePath": "api/Accounts",
+    "Method": "Deposite",
+    "RelativePath": "api/Accounts/Deposite",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "pinCode",
+        "Name": "accountNumber",
         "Type": "System.String",
         "IsRequired": false
       },
       {
-        "Name": "dto",
-        "Type": "BusinessLayer.DTOs.Accounts.UpdatePassword",
-        "IsRequired": true
+        "Name": "balance",
+        "Type": "System.Double",
+        "IsRequired": false
       }
     ],
-    "ReturnTypes": [],
-    "EndpointName": "UpdateAccount"
+    "ReturnTypes": []
   },
   {
     "ContainingType": "ApiBank.Controllers.Account.AccountsController",
@@ -47,6 +46,23 @@
     "Order": 0,
     "Parameters": [],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.Account.AccountsController",
+    "Method": "GeBalance",
+    "RelativePath": "api/Accounts/GetBalance/{accountNumber}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "accountNumber",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "EndpointName": "GetBalance"
   },
   {
     "ContainingType": "ApiBank.Controllers.Account.AccountsController",
@@ -81,6 +97,74 @@
     ],
     "ReturnTypes": [],
     "EndpointName": "GetPassword"
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.Account.AccountsController",
+    "Method": "TransferAmount",
+    "RelativePath": "api/Accounts/Transfer",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "senderId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "receiverId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "balance",
+        "Type": "System.Double",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.Account.AccountsController",
+    "Method": "UpdateAccount",
+    "RelativePath": "api/Accounts/UpdateAccount",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "AccountNumber",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "dto",
+        "Type": "BusinessLayer.DTOs.Accounts.UpdatePassword",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.Account.AccountsController",
+    "Method": "Withdraw",
+    "RelativePath": "api/Accounts/Withdraw",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "accountNumber",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "balance",
+        "Type": "System.Double",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "ApiBank.Controllers.Applications.ApplicationController",
@@ -125,6 +209,16 @@
     ],
     "ReturnTypes": [],
     "EndpointName": "GetApplicationByID"
+  },
+  {
+    "ContainingType": "ApiBank.Controllers.Client.ClientController",
+    "Method": "GetAll",
+    "RelativePath": "api/Client/GetAll",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "ApiBank.Controllers.People.PersonController",

@@ -45,7 +45,7 @@ namespace ApiBank.Controllers.User
                     return BadRequest($"Not Accepted ID: {userId}");
                 }
 
-                var user = await _userService.GetAsync(u => u.UserId == userId, "Person");
+                var user = await _userService.GetAsync(u => u.UserId == userId, "Person,Person.NationalityCountry");
 
                 if (user != null)
                 {
@@ -57,6 +57,7 @@ namespace ApiBank.Controllers.User
                         LastName = user.Person.LastName,
                         IsActive = user.IsActive,
                         DateOfBirth = user.Person.DateOfBirth,
+                        countryname = user.Person.NationalityCountry.CountryName
                     };
 
                     return Ok(new { success = true, data = reteriveUserdto });

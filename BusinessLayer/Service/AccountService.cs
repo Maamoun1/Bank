@@ -4,9 +4,11 @@ using BusinessLayer.Service.IService;
 using DataAccessLayer.Entities;
 using DataAccessLayer.Respository;
 using DataAccessLayer.Respository.IRepository;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices.Marshalling;
 using System.Security.Cryptography;
@@ -81,7 +83,7 @@ namespace BusinessLayer.Service
             {
                 ApplicationId = dto.ApplicationId,
                 ClientId = dto.ClientId,
-                PinCode = Util.GenerateRandomString(5),
+                AccountNumber = Util.GenerateAccountNumber(5),
                 Password = Encrypt(Util.password, Util.GetPublicKey()),
                 IssueDate = DateTime.Now,
                 ExpirationDate = DateTime.Now.AddYears(3),
@@ -94,10 +96,10 @@ namespace BusinessLayer.Service
 
         }
 
-        public async Task UpdatePassword(string pinCode,UpdatePassword dto)
+        public async Task UpdatePassword(string accountNumber, UpdatePassword dto)
         {
 
-            var accountFromDb = await _unitOfWork.Account.GetAsync(p => p.PinCode == pinCode);
+            var accountFromDb = await _unitOfWork.Account.GetAsync(p => p.AccountNumber == accountNumber);
 
             if (accountFromDb != null)
             {
@@ -107,19 +109,56 @@ namespace BusinessLayer.Service
             }
         }
 
-        public async Task<string> GetPassword(string pinCode)
+        public async Task<string> GetPassword(string accountNumber)
         {
+            
+            var accountFromDb = await _unitOfWork.Account.GetAsync(p => p.AccountNumber == accountNumber, null, true);
 
-            var accountFromDb = await _unitOfWork.Account.GetAsync(p => p.PinCode == pinCode, null, true);
-
-            return Decrypt(accountFromDb.Password, Util.GetPrivateKey());
-
+            if (accountFromDb != null)
+            {
+                return Decrypt(accountFromDb.Password, Util.GetPrivateKey());
+            }
+            else
+                return $"Not account with [{accountNumber}]";
         }
 
-        public bool IsAccountExist(string pinCode)
+        public bool IsAccountExist(string accountNumber)
         {
-            return _unitOfWork.Account.IsAccountExist(pinCode);
+            return _unitOfWork.Account.IsAccountExist(accountNumber);
         }
 
+        public void Deposite(string accountNumber, double balance)
+        {
+
+            if (balance < 100 || !IsAccountExist(accountNumber))
+                Console.WriteLine("Balance must be increase 100 or an account is not exist");
+            else
+                _unitOfWork.Account.Deposite(accountNumber, balance); 
+        }
+
+        public void Withdraw(string accountNumber, double balance)
+        {
+            if (balance < 100 || !IsAccountExist(accountNumber))
+                Console.WriteLine("Balance must be increase 100 or an account is not exist");
+            else
+                _unitOfWork.Account.Withdraw(accountNumber, balance);
+        }
+
+        public double  GetBalance(string accountNumber)
+        {
+            return _unitOfWork.Account.GetBalance(accountNumber);
+        }
+
+        public async Task<bool> TransferAmountAsync(string senderId, string receiverId, double amount)
+        {
+
+            if (amount < 0)
+            {
+                Console.WriteLine("Amount must be increase 0");
+                return false;
+            }
+
+            return await _unitOfWork.Account.TransferAmountAsync(senderId, receiverId, amount);
+        }
     }
 }

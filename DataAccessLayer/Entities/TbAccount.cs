@@ -11,7 +11,7 @@ public  class TbAccount
 
     public int ClientId { get; set; }
 
-    public string PinCode { get; set; } = null!;
+    public string AccountNumber { get; set; } = null!;
 
     public string Password { get; set; } = null!;
 
