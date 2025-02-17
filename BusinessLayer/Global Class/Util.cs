@@ -94,6 +94,48 @@ namespace BusinessLayer.Global_Class
             return new string(result);
         }
 
+      public  static string Encrypt(string plainText, string publicKey)
+        {
+            try
+            {
+                using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
+                {
+                    rsa.FromXmlString(publicKey);
+
+
+                    byte[] encryptedData = rsa.Encrypt(Encoding.UTF8.GetBytes(plainText), false);
+                    return Convert.ToBase64String(encryptedData);
+                }
+            }
+            catch (CryptographicException ex)
+            {
+                Console.WriteLine($"Encryption error: {ex.Message}");
+                throw; // Rethrow the exception to be caught in the Main method
+            }
+        }
+
+      public  static string Decrypt(string cipherText, string privateKey)
+        {
+            try
+            {
+                using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
+                {
+                    rsa.FromXmlString(privateKey);
+
+
+                    byte[] encryptedData = Convert.FromBase64String(cipherText);
+                    byte[] decryptedData = rsa.Decrypt(encryptedData, false);
+
+
+                    return Encoding.UTF8.GetString(decryptedData);
+                }
+            }
+            catch (CryptographicException ex)
+            {
+                Console.WriteLine($"Decryption error: {ex.Message}");
+                throw; // Rethrow the exception to be caught in the Main method
+            }
+        }
 
 
 

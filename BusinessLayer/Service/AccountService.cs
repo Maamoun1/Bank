@@ -33,48 +33,6 @@ namespace BusinessLayer.Service
             throw new NotImplementedException();
         }
 
-        static string Encrypt(string plainText, string publicKey)
-        {
-            try
-            {
-                using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
-                {
-                    rsa.FromXmlString(publicKey);
-
-
-                    byte[] encryptedData = rsa.Encrypt(Encoding.UTF8.GetBytes(plainText), false);
-                    return Convert.ToBase64String(encryptedData);
-                }
-            }
-            catch (CryptographicException ex)
-            {
-                Console.WriteLine($"Encryption error: {ex.Message}");
-                throw; // Rethrow the exception to be caught in the Main method
-            }
-        }
-
-        static string Decrypt(string cipherText, string privateKey)
-        {
-            try
-            {
-                using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
-                {
-                    rsa.FromXmlString(privateKey);
-
-
-                    byte[] encryptedData = Convert.FromBase64String(cipherText);
-                    byte[] decryptedData = rsa.Decrypt(encryptedData, false);
-
-
-                    return Encoding.UTF8.GetString(decryptedData);
-                }
-            }
-            catch (CryptographicException ex)
-            {
-                Console.WriteLine($"Decryption error: {ex.Message}");
-                throw; // Rethrow the exception to be caught in the Main method
-            }
-        }
 
         public  async Task AddAccount(CreateAccountDto dto)
         {
@@ -84,7 +42,7 @@ namespace BusinessLayer.Service
                 ApplicationId = dto.ApplicationId,
                 ClientId = dto.ClientId,
                 AccountNumber = Util.GenerateAccountNumber(5),
-                Password = Encrypt(Util.password, Util.GetPublicKey()),
+                Password = Util.Encrypt(Util.password, Util.GetPublicKey()),
                 IssueDate = DateTime.Now,
                 ExpirationDate = DateTime.Now.AddYears(3),
                 IssueReason = dto.IssueReason,
@@ -103,8 +61,8 @@ namespace BusinessLayer.Service
 
             if (accountFromDb != null)
             {
-
-                accountFromDb.Password = Encrypt(dto.Password, Util.GetPublicKey());
+                
+                accountFromDb.Password = Util.Encrypt(dto.Password, Util.GetPublicKey());
                 _unitOfWork.Account.Update(accountFromDb);
             }
         }
@@ -116,7 +74,7 @@ namespace BusinessLayer.Service
 
             if (accountFromDb != null)
             {
-                return Decrypt(accountFromDb.Password, Util.GetPrivateKey());
+                return Util.Decrypt(accountFromDb.Password, Util.GetPrivateKey());
             }
             else
                 return $"Not account with [{accountNumber}]";

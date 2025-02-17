@@ -232,7 +232,7 @@ public partial class ApplicationDbContext : Microsoft.EntityFrameworkCore.DbCont
             entity.HasKey(e => e.UserId).HasName("PK__Users__1788CCACF88884EC");
 
             entity.Property(e => e.UserId).HasColumnName("UserID");
-            entity.Property(e => e.Password).HasMaxLength(50);
+            entity.Property(e => e.Password).HasColumnType("NVARCHAR(MAX)");
             entity.Property(e => e.PersonId).HasColumnName("PersonID");
             entity.Property(e => e.UserName).HasMaxLength(30);
 

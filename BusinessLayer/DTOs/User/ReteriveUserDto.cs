@@ -12,10 +12,9 @@ namespace BusinessLayer.DTOs.User
         public int userId {  get; set; }
         public string UserName { get; set; }
         public bool IsActive { get; set; }
-        public string FirstName {  get; set; }
-        public string LastName {  get; set; }
+        public string FullName {  get; set; }
         public DateTime DateOfBirth { get; set; }
-        public string countryname {  get; set; }
+        public string CountryName {  get; set; }
 
 
     }

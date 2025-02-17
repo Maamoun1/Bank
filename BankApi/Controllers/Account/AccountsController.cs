@@ -37,25 +37,25 @@ namespace ApiBank.Controllers.Account
 
 
         [HttpGet("GetByID/{accountId}", Name = "GetAccountByID")]
-        public async Task<IActionResult> GetAccountByID(int accountId)
+        public async Task<IActionResult> GetAccountByID(string accountNumber)
         {
 
             try
             {
 
-                if (accountId < 0)
+                if (string.IsNullOrWhiteSpace(accountNumber))
                 {
-                    return BadRequest($"Not Accepted ID: {accountId}");
+                    return BadRequest($"Not Accepted ID: {accountNumber}");
                 }
 
-                var account = await _accountService.GetAsync(a => a.AccountId == accountId, "Application,Client,CreatedByUser");
+                var account = await _accountService.GetAsync(a => a.AccountNumber == accountNumber, "Application,Client,CreatedByUser,Client.Person");
 
                 if (account != null)
                 {
                     ReteriveAccountDto reteriveAccountDto = new ReteriveAccountDto()
                     {
-                        AccountId = accountId,
-                        AccountNumber = account.AccountNumber,
+                        AccountNumber = accountNumber,
+                        ClientName=account.Client.Person.FirstName+' '+ account.Client.Person.LastName,
                         IssueReason = account.IssueReason,
                         Balance = account.Balance,
                         IsActive = account.IsActive,
@@ -66,7 +66,7 @@ namespace ApiBank.Controllers.Account
 
                 else
                 {
-                    return NotFound($"account with ID {accountId} Not Found.");
+                    return NotFound($"account with ID {accountNumber} Not Found.");
                 }
             }
 

@@ -422,3 +422,4 @@ E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\refint\ApiBank.dll
 E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ApiBank.pdb
 E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ApiBank.genruntimeconfig.cache
 E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ref\ApiBank.dll
+E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ApiBank.MvcApplicationPartsAssemblyInfo.cs

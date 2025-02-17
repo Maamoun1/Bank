@@ -1,4 +1,6 @@
-﻿namespace BusinessLayer.DTOs.People
+﻿using Microsoft.AspNetCore.Http;
+
+namespace BusinessLayer.DTOs.People
 {
     public class CreatePersonDto
     {
@@ -24,7 +26,7 @@
 
         public int NationalityCountryId { get; set; }
 
-        public string? ImagePath { get; set; }
+        public IFormFile ImageFile { get; set; }
 
     }
 }

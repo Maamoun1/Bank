@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.DTOs.User;
+using BusinessLayer.Global_Class;
 using BusinessLayer.Service.IService;
 using DataAccessLayer.Entities;
 using DataAccessLayer.Respository.IRepository;
@@ -28,7 +29,7 @@ namespace BusinessLayer.Service
             var newUser = new TbUser
             {
                 UserName = dto.UserName,
-                Password = dto.Password,
+                Password =Util.Encrypt( dto.Password,Util.GetPublicKey()),
                 IsActive = dto.IsActive,
                 PersonId = dto.reterivePersondto.Id
             };
@@ -50,7 +51,7 @@ namespace BusinessLayer.Service
             {
 
                 userFromDb.UserName = dto.UserName;
-                userFromDb.Password = dto.Password;
+                userFromDb.Password =Util.Encrypt( dto.Password,Util.GetPublicKey()); 
                 userFromDb.IsActive = dto.IsActive;
 
                 _unitOfWork.User.Update(userFromDb);

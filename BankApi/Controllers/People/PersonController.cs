@@ -36,7 +36,7 @@ namespace ApiBank.Controllers.People
         }
 
 
-        [HttpGet("GetByID{personID}", Name = "GetPersonByID")]
+        [HttpGet("GetByID/{personID}", Name = "GetPersonByID")]
         public async Task<IActionResult> GetPersonByID(int personID)
         {
 
@@ -49,23 +49,20 @@ namespace ApiBank.Controllers.People
                 }
 
                 var Student = await _personService.GetAsync(p => p.PersonId == personID, "NationalityCountry");
-                
+
                 if (Student != null)
                 {
+
                     ReterivePersonDto reterivePersondto = new ReterivePersonDto()
                     {
                         Id = Student.PersonId,
+                        NationalNo = Student.NationalNo,
+                        FullName = Student.FirstName + ' ' + Student.SecondName + ' ' + Student.ThirdName + ' ' + Student.LastName,
                         Address = Student.Address,
                         DateOfBirth = Student.DateOfBirth,
                         Email = Student.Email,
-                        FirstName = Student.FirstName,
-                        SecondName = Student.SecondName,
-                        Gendor = Student.Gendor,
+                        Gendor = (Student.Gendor == 0) ? "Male" : "Female",
                         ImagePath = Student.ImagePath,
-                        LastName = Student.LastName,
-                        NationalNo = Student.NationalNo,
-                        ThirdName = Student.ThirdName,
-                        NationalityCountryId = Student.NationalityCountryId,
                         Phone = Student.Phone,
                         CountryName = Student.NationalityCountry.CountryName
 
@@ -73,7 +70,7 @@ namespace ApiBank.Controllers.People
                     return Ok(new { success = true, data = reterivePersondto });
                 }
 
-                else 
+                else
                 {
                     return NotFound($"Student with ID {personID} Not Found.");
                 }
@@ -107,7 +104,7 @@ namespace ApiBank.Controllers.People
 
 
         [HttpPost(Name = "AddPerson")]
-        public async Task<IActionResult> AddPerson(CreatePersonDto dto)
+        public async Task<IActionResult> AddPerson([FromForm] CreatePersonDto dto)
         {
 
             if (dto == null)
@@ -120,9 +117,9 @@ namespace ApiBank.Controllers.People
             return Ok(dto);
         }
 
-        
-        [HttpPut(Name ="UpdatePerson")]
-        public async Task<IActionResult>UpdatePerson(int personID, UpdatePersonDto dto)
+
+        [HttpPut(Name = "UpdatePerson")]
+        public async Task<IActionResult> UpdatePerson(int personID, UpdatePersonDto dto)
         {
 
             if (personID < 0)
@@ -130,7 +127,7 @@ namespace ApiBank.Controllers.People
 
             if (!_personService.IsPersonExist(personID))
                 NotFound("Person is not Found exist..");
-            
+
             await _personService.Update(personID, dto);
             await _personService.SaveChanges();
 
@@ -145,16 +142,19 @@ namespace ApiBank.Controllers.People
             if (personID < 0)
                 return BadRequest($"Not Accepted ID {personID}");
 
-            var person= await _personService.GetAsync( p =>p.PersonId == personID);
+            var person = await _personService.GetAsync(p => p.PersonId == personID);
 
             if (person == null)
                 return NotFound($"Student with ID {personID} not found..");
-          
+
 
             _personService.Remove(person);
             await _personService.SaveChanges();
 
             return Ok($"Student with ID {personID} has been deleted.");
         }
+
+
     }
 }
+

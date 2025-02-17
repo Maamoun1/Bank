@@ -25,12 +25,18 @@
         "operationId": "GetAccountByID",
         "parameters": [
           {
+            "name": "accountNumber",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "accountId",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "string"
             }
           }
         ],
@@ -345,7 +351,7 @@
         }
       }
     },
-    "/api/Person/GetByID{personID}": {
+    "/api/Person/GetByID/{personID}": {
       "get": {
         "tags": [
           "Person"
@@ -401,19 +407,89 @@
         "operationId": "AddPerson",
         "requestBody": {
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/CreatePersonDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePersonDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePersonDto"
+                "type": "object",
+                "properties": {
+                  "NationalNo": {
+                    "type": "string"
+                  },
+                  "FirstName": {
+                    "type": "string"
+                  },
+                  "SecondName": {
+                    "type": "string"
+                  },
+                  "ThirdName": {
+                    "type": "string"
+                  },
+                  "LastName": {
+                    "type": "string"
+                  },
+                  "DateOfBirth": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "Gendor": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Address": {
+                    "type": "string"
+                  },
+                  "Phone": {
+                    "type": "string"
+                  },
+                  "Email": {
+                    "type": "string"
+                  },
+                  "NationalityCountryId": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "ImageFile": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "NationalNo": {
+                  "style": "form"
+                },
+                "FirstName": {
+                  "style": "form"
+                },
+                "SecondName": {
+                  "style": "form"
+                },
+                "ThirdName": {
+                  "style": "form"
+                },
+                "LastName": {
+                  "style": "form"
+                },
+                "DateOfBirth": {
+                  "style": "form"
+                },
+                "Gendor": {
+                  "style": "form"
+                },
+                "Address": {
+                  "style": "form"
+                },
+                "Phone": {
+                  "style": "form"
+                },
+                "Email": {
+                  "style": "form"
+                },
+                "NationalityCountryId": {
+                  "style": "form"
+                },
+                "ImageFile": {
+                  "style": "form"
+                }
               }
             }
           }
@@ -707,60 +783,6 @@
         },
         "additionalProperties": false
       },
-      "CreatePersonDto": {
-        "type": "object",
-        "properties": {
-          "nationalNo": {
-            "type": "string",
-            "nullable": true
-          },
-          "firstName": {
-            "type": "string",
-            "nullable": true
-          },
-          "secondName": {
-            "type": "string",
-            "nullable": true
-          },
-          "thirdName": {
-            "type": "string",
-            "nullable": true
-          },
-          "lastName": {
-            "type": "string",
-            "nullable": true
-          },
-          "dateOfBirth": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "gendor": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "address": {
-            "type": "string",
-            "nullable": true
-          },
-          "phone": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "nationalityCountryId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "imagePath": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "CreateUserDto": {
         "type": "object",
         "properties": {
@@ -792,19 +814,7 @@
             "type": "string",
             "nullable": true
           },
-          "firstName": {
-            "type": "string",
-            "nullable": true
-          },
-          "secondName": {
-            "type": "string",
-            "nullable": true
-          },
-          "thirdName": {
-            "type": "string",
-            "nullable": true
-          },
-          "lastName": {
+          "fullName": {
             "type": "string",
             "nullable": true
           },
@@ -813,8 +823,8 @@
             "format": "date-time"
           },
           "gendor": {
-            "type": "integer",
-            "format": "int32"
+            "type": "string",
+            "nullable": true
           },
           "address": {
             "type": "string",
@@ -827,10 +837,6 @@
           "email": {
             "type": "string",
             "nullable": true
-          },
-          "nationalityCountryId": {
-            "type": "integer",
-            "format": "int32"
           },
           "imagePath": {
             "type": "string",

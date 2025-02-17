@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using DataAccessLayer.Respository;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using BusinessLayer.DTOs.People;
+using Microsoft.AspNetCore.Http;
 
 
 namespace BusinessLayer.Service
@@ -69,10 +70,39 @@ namespace BusinessLayer.Service
                 Gendor=dto.Gendor,
                 NationalNo=dto.NationalNo,
                 Phone=dto.Phone,
-                ImagePath=dto.ImagePath,
-                Address=dto.Address
+                ImagePath= await ReturnPictureName(dto.ImageFile),
+                Address=dto.Address,
+                
             };
             await _unitOfWork.Person.AddAsync(newperson);
+        }
+
+        public async Task<string> ReturnPictureName(IFormFile imageFile)
+        {
+            // Check if no file is uploaded
+            if (imageFile == null || imageFile.Length == 0)
+                return ("No file uploaded.");
+
+            // Directory where files will be uploaded
+            var uploadDirectory = @"C:\MyUploads";
+
+            // Generate a unique filename
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+            var filePath = Path.Combine(uploadDirectory, fileName);
+
+            // Ensure the uploads directory exists, create if it doesn't
+            if (!Directory.Exists(uploadDirectory))
+            {
+                Directory.CreateDirectory(uploadDirectory);
+            }
+
+            // Save the file to the server
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(stream);
+            }
+
+            return fileName;
         }
     }
 

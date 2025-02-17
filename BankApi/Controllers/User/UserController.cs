@@ -53,11 +53,10 @@ namespace ApiBank.Controllers.User
                     {
                         userId = userId,
                         UserName = user.UserName,
-                        FirstName = user.Person.FirstName,
-                        LastName = user.Person.LastName,
+                       FullName= user.Person.FirstName+' ' + user.Person.LastName,
                         IsActive = user.IsActive,
                         DateOfBirth = user.Person.DateOfBirth,
-                        countryname = user.Person.NationalityCountry.CountryName
+                        CountryName = user.Person.NationalityCountry.CountryName
                     };
 
                     return Ok(new { success = true, data = reteriveUserdto });

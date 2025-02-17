@@ -73,8 +73,13 @@
     "Order": 0,
     "Parameters": [
       {
+        "Name": "accountNumber",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
         "Name": "accountId",
-        "Type": "System.Int32",
+        "Type": "",
         "IsRequired": true
       }
     ],
@@ -229,9 +234,64 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "dto",
-        "Type": "BusinessLayer.DTOs.People.CreatePersonDto",
-        "IsRequired": true
+        "Name": "NationalNo",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "FirstName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "SecondName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ThirdName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "LastName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "DateOfBirth",
+        "Type": "System.DateTime",
+        "IsRequired": false
+      },
+      {
+        "Name": "Gendor",
+        "Type": "System.Byte",
+        "IsRequired": false
+      },
+      {
+        "Name": "Address",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Phone",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Email",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "NationalityCountryId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "ImageFile",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [],
@@ -289,7 +349,7 @@
   {
     "ContainingType": "ApiBank.Controllers.People.PersonController",
     "Method": "GetPersonByID",
-    "RelativePath": "api/Person/GetByID{personID}",
+    "RelativePath": "api/Person/GetByID/{personID}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,

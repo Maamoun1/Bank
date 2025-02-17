@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.DTOs.People;
 using DataAccessLayer.Entities;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace BusinessLayer.Service.IService
 
         Task AddPerson(CreatePersonDto dto);
 
+       Task  <string> ReturnPictureName(IFormFile formFile);
 
     }
 }
