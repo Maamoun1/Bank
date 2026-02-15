@@ -409,12 +409,6 @@ E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\scopedcss\bundle\ApiBank.styles.css
 E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\staticwebassets.build.json
 E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\staticwebassets.development.json
 E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\staticwebassets\msbuild.ApiBank.Microsoft.AspNetCore.StaticWebAssets.props
-E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\staticwebassets\msbuild.ApiBank.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
-E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\staticwebassets\msbuild.build.ApiBank.props
-E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.ApiBank.props
-E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.ApiBank.props
-E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\staticwebassets.pack.json
 E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ApiBank.csproj.Up2Date
 E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ApiBank.dll
@@ -423,3 +417,8 @@ E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ApiBank.pdb
 E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ApiBank.genruntimeconfig.cache
 E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ref\ApiBank.dll
 E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\ApiBank.MvcApplicationPartsAssemblyInfo.cs
+E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\rpswa.dswa.cache.json
+E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\rjimswa.dswa.cache.json
+E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+E:\MyOwnGithub\Bank\BankApi\obj\Debug\net8.0\staticwebassets.build.json.cache

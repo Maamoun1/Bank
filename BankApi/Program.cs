@@ -11,7 +11,23 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddCors();
+builder.Services.AddCors(options =>
+{
+
+    options.AddPolicy("BankApiCoresPloicy", policy =>
+    {
+        policy
+        .WithOrigins(
+            "https://localhost:7272",
+            "http://localhost:5049"
+            )
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    });
+    
+  });
+
+
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -52,7 +68,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+app.UseCors("BankApiCoresPloicy");
+
 app.UseAuthorization();
 
 app.MapControllers();
