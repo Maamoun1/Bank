@@ -17,6 +17,14 @@ namespace DataAccessLayer.Respository
 
         }
 
+        public async Task<TbUser?> GetByUsernameAsync(string username)
+        {
+            
+            return await _context.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(user =>user.UserName.ToLower() ==username.ToLower()); 
+        }
+
         public bool IsUserExist(int UserId)
         {
             //  return _context.People.Find(PersonID) != null;
@@ -27,7 +35,13 @@ namespace DataAccessLayer.Respository
             _context.Users.Update(entity);
         }
 
+        public  async Task<bool> UsernameExistsAsync(string username)
+        {
+
+            return await _context.Users
+                .AnyAsync(u => u.UserName.ToLower() == username.ToLower());
 
 
+        }
     }
 }

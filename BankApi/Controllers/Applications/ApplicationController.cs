@@ -1,11 +1,13 @@
 ﻿using BusinessLayer.DTOs.Applications;
 using BusinessLayer.Service;
 using BusinessLayer.Service.IService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiBank.Controllers.Applications
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ApplicationController : ControllerBase

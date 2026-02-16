@@ -5,9 +5,11 @@ using DataAccessLayer.Respository.IRepository;
 using BusinessLayer.Service.IService;
 using DataAccessLayer.Entities;
 using BusinessLayer.DTOs.People;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiBank.Controllers.People
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PersonController : ControllerBase

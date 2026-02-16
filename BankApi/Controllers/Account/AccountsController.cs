@@ -1,10 +1,12 @@
 ﻿using BusinessLayer.DTOs.Accounts;
 using BusinessLayer.DTOs.People;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiBank.Controllers.Account
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AccountsController : ControllerBase

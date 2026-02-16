@@ -12,5 +12,7 @@ namespace DataAccessLayer.Respository.IRepository
 
         bool IsUserExist(int UserId);
 
+        Task<bool> UsernameExistsAsync(string username);
+        Task<TbUser?> GetByUsernameAsync(string username);
     }
 }
