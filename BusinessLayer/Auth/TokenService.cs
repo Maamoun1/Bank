@@ -17,7 +17,7 @@ namespace BusinessLayer.Auth
         private readonly string _key;
         private readonly string _issuer;
         private readonly string _audience;
-        private readonly int _expireInMinutes;  
+        private readonly int _expireInMinutes;
 
         public TokenService(IConfiguration configuration)
         {
@@ -40,6 +40,19 @@ namespace BusinessLayer.Auth
                 new Claim(ClaimTypes.Name,user.UserName),
 
             };
+
+            if (user.UserRoles != null && user.UserRoles.Any())
+            {
+
+                foreach (var userRole in user.UserRoles)
+                {
+                    if (userRole.Role != null && !string.IsNullOrEmpty(userRole.Role.RoleName))
+                    {
+                        claims.Add(new Claim(ClaimTypes.Role, userRole.Role.RoleName));
+                    }
+                }
+            }
+
 
             var keyBytes = Encoding.UTF8.GetBytes(_key);
             var symmetricKey = new SymmetricSecurityKey(keyBytes);

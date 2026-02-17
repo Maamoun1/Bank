@@ -18,6 +18,8 @@ namespace ApiBank.Controllers.Client
             _readOnlyService = readOnlyService;
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
         {

@@ -20,6 +20,8 @@ namespace ApiBank.Controllers.Applications
             _applicationService = applicationService;
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
         {

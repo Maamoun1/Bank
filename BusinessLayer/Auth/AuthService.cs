@@ -77,8 +77,8 @@ namespace BusinessLayer.Auth
             {
                 IsSuccess = true,
                 Message = "Login Successful",
-                AccessToken=token,
-                ExpiresAt = DateTime.UtcNow.AddMinutes(30)
+                AccessToken = token,
+                ExpiresAt = expiresAt
             };
 
         }

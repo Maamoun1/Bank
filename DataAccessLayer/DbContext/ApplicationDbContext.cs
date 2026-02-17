@@ -26,6 +26,10 @@ public partial class ApplicationDbContext : Microsoft.EntityFrameworkCore.DbCont
 
     public virtual DbSet<TbClient> Clients { get; set; }
 
+    public virtual DbSet<TbRole> Roles {  get; set; }
+
+    public virtual DbSet<TbUserRole> UserRoles {  get; set; }
+
     public virtual DbSet<TbCountry> Countries { get; set; }
 
     public virtual DbSet<TbCurrency> Currencies { get; set; }
@@ -241,6 +245,37 @@ public partial class ApplicationDbContext : Microsoft.EntityFrameworkCore.DbCont
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Users__PersonID__5CD6CB2B");
         });
+
+
+        modelBuilder.Entity<TbRole>(entity =>
+            {
+                entity.HasKey(e => e.RoleId);
+                entity.ToTable("Roles");
+                entity.Property(e => e.RoleName).HasMaxLength(50).IsRequired();
+            });
+
+
+        modelBuilder.Entity<TbUserRole>(entity =>
+        {
+
+            entity.HasKey(e => e.UserRoledId);
+            entity.ToTable("UserRoles");
+
+            entity.HasOne(d => d.User)
+            .WithMany(p => p.UserRoles)
+            .HasForeignKey(d => d.UserId)
+            .HasConstraintName("FK_UserRoles_Users");
+
+
+
+            entity.HasOne(d => d.Role)
+            .WithMany(p => p.UserRoles)
+            .HasForeignKey(d => d.RoleId)
+            .HasConstraintName("FK_UserRoles_Roles");
+
+        });
+
+
 
         OnModelCreatingPartial(modelBuilder);
     }

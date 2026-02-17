@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ApiBank.Controllers.User
 {
+
+    [Authorize(Roles = "Admin")]
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]

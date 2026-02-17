@@ -26,4 +26,6 @@ public partial class TbUser
     public virtual TbPerson Person { get; set; } = null!;
 
     public virtual ICollection<TbTransferLog> TransferLogs { get; set; } = new List<TbTransferLog>();
+
+    public virtual ICollection<TbUserRole> UserRoles { get; set; } = new List<TbUserRole>();
 }

@@ -21,6 +21,8 @@ namespace DataAccessLayer.Respository
         {
             
             return await _context.Users
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur =>ur.Role)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(user =>user.UserName.ToLower() ==username.ToLower()); 
         }

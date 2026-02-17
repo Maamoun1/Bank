@@ -19,7 +19,7 @@ namespace ApiBank.Controllers.Account
             _accountService = accountService;
         }
 
-
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
         {

@@ -21,6 +21,8 @@ namespace ApiBank.Controllers.People
             _personService = personService;
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
         {
@@ -137,6 +139,7 @@ namespace ApiBank.Controllers.People
         }
 
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("Delete{personID}", Name = "DeletePerson")]
         public async Task<IActionResult> DeletePerson(int personID)
         {
