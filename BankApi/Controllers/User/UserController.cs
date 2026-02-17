@@ -1,13 +1,15 @@
-﻿using BusinessLayer.DTOs.People;
+﻿using BusinessLayer.Authorization;
+using BusinessLayer.DTOs.People;
 using BusinessLayer.DTOs.User;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ApiBank.Controllers.User
 {
 
-    [Authorize(Roles = "Admin")]
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
@@ -15,11 +17,15 @@ namespace ApiBank.Controllers.User
     {
 
         private readonly IUserService _userService;
-        public UserController(IUserService userService)
+
+        private readonly IAuthorizationService _authorizationService;
+        public UserController(IUserService userService, IAuthorizationService authorizationService)
         {
             _userService = userService;
+            _authorizationService = authorizationService;
         }
 
+        [Authorize("Roles=Admin")]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
         {
@@ -36,10 +42,15 @@ namespace ApiBank.Controllers.User
             }
         }
 
-
         [HttpGet("GetByID{userId}", Name = "GetUserByID")]
         public async Task<IActionResult> GetUserByID(int userId)
         {
+
+            var authResult = await _authorizationService.AuthorizeAsync(User, userId, "SameUserPolicy");
+            if (!authResult.Succeeded)
+            {
+                return Unauthorized();
+            }
 
             try
             {
@@ -48,6 +59,19 @@ namespace ApiBank.Controllers.User
                 {
                     return BadRequest($"Not Accepted ID: {userId}");
                 }
+                
+                var currentUserIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if(string.IsNullOrEmpty(currentUserIdClaim) || !int.TryParse(currentUserIdClaim, out int currentUserId))
+                {
+                    return Unauthorized("Invalid User identity.");
+                }
+
+                if(userId != currentUserId && !User.IsInRole("Admin"))
+                {
+                    return StatusCode(403, new { success = false, message = "Forbidden: You are not authorized to access another user's information" });
+                }
+
 
                 var user = await _userService.GetAsync(u => u.UserId == userId, "Person,Person.NationalityCountry");
 
@@ -86,6 +110,19 @@ namespace ApiBank.Controllers.User
             if (userId < 0)
             {
                 return BadRequest($"Not Accepted ID: {userId}");
+            }
+
+
+            var currentUserIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(currentUserIdClaim) || !int.TryParse(currentUserIdClaim, out int currentUserId))
+            {
+                return Unauthorized("Invalid user identity");
+            }
+
+
+            if (userId != currentUserId && !User.IsInRole("Admin"))
+            {
+                return StatusCode(403, new { success = false, message = "Forbidden: You are not authorized to access another user's information" });
             }
 
             if (_userService.IsUserExist(userId))

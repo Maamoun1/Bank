@@ -7,6 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Configuration;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authorization;
+using BusinessLayer.Authorization;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -107,7 +109,17 @@ builder.Services.AddAuthentication(options =>
             ClockSkew = TimeSpan.Zero
         };
     });
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization( options =>
+{
+    options.AddPolicy("SameUserPolicy", policy =>
+    {
+        policy.Requirements.Add(new SameUserRequirement());
+    });
+
+});
+
+builder.Services.AddSingleton<IAuthorizationHandler, BusinessLayer.Authorization.SameUserHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, SameUserHandler>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<TokenService>();
