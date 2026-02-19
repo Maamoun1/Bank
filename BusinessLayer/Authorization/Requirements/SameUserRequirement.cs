@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLayer.Authorization
+namespace BusinessLayer.Authorization.Requirements
 {
     public class SameUserRequirement : IAuthorizationRequirement 
     {

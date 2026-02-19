@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ApiBank.DTOs.Requests
+namespace BusinessLayer.Authentication.DTOs
 {
     public class LoginRequest
     {

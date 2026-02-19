@@ -1,5 +1,4 @@
 using ApiBank.Helpers;
-using BusinessLayer.Auth;
 using BusinessLayer.Security;
 using DataAccessLayer.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,7 +7,10 @@ using System.Configuration;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authorization;
-using BusinessLayer.Authorization;
+using BusinessLayer.Authentication.Services;
+using BusinessLayer.Authorization.Handlers;
+using BusinessLayer.Tokens.Service;
+using BusinessLayer.Authorization.Requirements;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -118,7 +120,7 @@ builder.Services.AddAuthorization( options =>
 
 });
 
-builder.Services.AddSingleton<IAuthorizationHandler, BusinessLayer.Authorization.SameUserHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, SameUserHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, SameUserHandler>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -139,6 +141,8 @@ builder.Services.AddScoped<IAccountsTypesRepository, AccountTypeRepository>();
 builder.Services.AddScoped<IPersonService, PersonService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+
 
 var app = builder.Build();
 

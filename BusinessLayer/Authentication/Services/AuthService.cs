@@ -1,6 +1,6 @@
-﻿using ApiBank.DTOs.Requests;
-using ApiBank.DTOs.Responses;
+﻿using BusinessLayer.Authentication.DTOs;
 using BusinessLayer.Security;
+using BusinessLayer.Tokens.Service;
 using DataAccessLayer.Respository.IRepository;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLayer.Auth
+namespace BusinessLayer.Authentication.Services
 {
     public class AuthService : IAuthService
     {

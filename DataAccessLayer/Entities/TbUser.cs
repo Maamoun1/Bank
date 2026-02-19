@@ -28,4 +28,7 @@ public partial class TbUser
     public virtual ICollection<TbTransferLog> TransferLogs { get; set; } = new List<TbTransferLog>();
 
     public virtual ICollection<TbUserRole> UserRoles { get; set; } = new List<TbUserRole>();
+
+    public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
+
 }

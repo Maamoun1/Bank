@@ -1,12 +1,11 @@
-﻿using ApiBank.DTOs.Requests;
-using ApiBank.DTOs.Responses;
+﻿using BusinessLayer.Authentication.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLayer.Auth
+namespace BusinessLayer.Authentication.Services
 {
     public interface IAuthService
     {

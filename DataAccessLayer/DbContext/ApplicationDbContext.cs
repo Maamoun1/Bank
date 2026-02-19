@@ -42,6 +42,9 @@ public partial class ApplicationDbContext : Microsoft.EntityFrameworkCore.DbCont
 
     public virtual DbSet<TbUser> Users { get; set; }
 
+    public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
+
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Data Source=DESKTOP-9A4HLOV;Database=Bank;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
@@ -275,6 +278,18 @@ public partial class ApplicationDbContext : Microsoft.EntityFrameworkCore.DbCont
 
         });
 
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+
+            entity.HasKey(e => e.RefreshTokenId);
+
+            entity.Property(e => e.TokenHash).HasMaxLength(500).IsRequired();
+            entity.HasOne(d => d.User)
+            .WithMany(p => p.RefreshTokens)
+            .HasForeignKey(d => d.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        });
 
 
         OnModelCreatingPartial(modelBuilder);

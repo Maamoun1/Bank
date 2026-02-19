@@ -9,7 +9,7 @@ using System.Security.Claims;
 using System.Text;
 using DataAccessLayer.Entities;
 
-namespace BusinessLayer.Auth
+namespace BusinessLayer.Tokens.Service
 {
     public class TokenService
     {
@@ -24,11 +24,11 @@ namespace BusinessLayer.Auth
             _key = configuration["Jwt:Key"]
                 ?? throw new InvalidOperationException("Jwt:Key is missing in configuration");
 
-            _issuer = configuration["Jwt :Issuer"] ?? "BankApi";
+            _issuer = configuration["Jwt:Issuer"] ?? "BankApi";
 
             _audience = configuration["Jwt:Audience"] ?? "BankApiUser";
 
-            _expireInMinutes = configuration.GetValue<int>("Jwt:ExpireInMinutes", 30);
+            _expireInMinutes = configuration.GetValue("Jwt:ExpireInMinutes", 30);
 
         }
 

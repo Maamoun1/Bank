@@ -10,6 +10,9 @@ namespace DataAccessLayer.Respository.IRepository
     {
         void Update(TbUser entity);
 
+        Task<TbUser?> GetByIdAsync(int id);
+
+
         bool IsUserExist(int UserId);
 
         Task<bool> UsernameExistsAsync(string username);

@@ -1,5 +1,5 @@
-﻿using ApiBank.DTOs.Requests;
-using BusinessLayer.Auth;
+﻿using BusinessLayer.Authentication.DTOs;
+using BusinessLayer.Authentication.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

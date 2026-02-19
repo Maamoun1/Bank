@@ -1,4 +1,5 @@
-﻿using DataAccessLayer.Entities;
+﻿using BusinessLayer.Authorization.Requirements;
+using DataAccessLayer.Entities;
 using DataAccessLayer.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -10,7 +11,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLayer.Authorization
+namespace BusinessLayer.Authorization.Handlers
 {
     public class SameUserHandler : AuthorizationHandler<SameUserRequirement,int>
     {

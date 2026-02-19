@@ -17,6 +17,15 @@ namespace DataAccessLayer.Respository
 
         }
 
+        public async Task<TbUser?> GetByIdAsync(int id)
+        {
+
+            return await _context.Users
+            .Include(u => u.Person)                     
+            .Include(u => u.Person.NationalityCountry)  
+            .FirstOrDefaultAsync(u => u.UserId == id);
+        }
+
         public async Task<TbUser?> GetByUsernameAsync(string username)
         {
             

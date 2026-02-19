@@ -1,5 +1,4 @@
-﻿
-namespace ApiBank.DTOs.Responses
+﻿namespace BusinessLayer.Authentication.DTOs
 {
     public class LoginResponse
     {
