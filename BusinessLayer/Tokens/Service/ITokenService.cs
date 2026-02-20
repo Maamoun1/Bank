@@ -9,7 +9,7 @@ namespace BusinessLayer.Tokens.Service
 {
     public interface ITokenService
     {
-        string GenerateAccessToken(TbUser user);
+        string GenerateToken(TbUser user);
 
         (string Token, DateTime ExpiresAt) GenerateTokenWithExpiry(TbUser user);
 

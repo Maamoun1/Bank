@@ -122,9 +122,11 @@ builder.Services.AddAuthorization( options =>
 
 builder.Services.AddSingleton<IAuthorizationHandler, SameUserHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, SameUserHandler>();
-
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IPasswordHasher, BcryptPasswordHasher>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));

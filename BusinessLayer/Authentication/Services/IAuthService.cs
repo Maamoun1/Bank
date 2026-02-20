@@ -10,5 +10,8 @@ namespace BusinessLayer.Authentication.Services
     public interface IAuthService
     {
         Task<LoginResponse> LoginAsync(LoginRequest request);
+
+        Task LogoutAsync(int userId);
+
     }
 }

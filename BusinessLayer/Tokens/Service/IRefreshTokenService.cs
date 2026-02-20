@@ -17,6 +17,8 @@ namespace BusinessLayer.Tokens.Service
 
         Task RevokeAllAsync(int userId);
 
+        Task<bool> RevokeAsync(string refreshToken);
+
 
     }
 }

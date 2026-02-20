@@ -32,31 +32,35 @@ namespace BusinessLayer.Tokens.Service
         public async Task<TokenResponse> GenerateTokensAsync(TbUser user)
         {
 
-            var (accessToken, expiresAt) = _tokenService.GenerateTokenWithExpiry(user);
+            // generate access token
+            var (accessToken, accessTokenExpiry) = _tokenService.GenerateTokenWithExpiry(user);
 
+            // generate refresh token
             var refreshToken = TokenHelpers.GenerateRefreshToken();
 
-            var tokenHash = TokenHasher.HashToken(refreshToken);
+            var refreshTokenHash = TokenHasher.HashToken(refreshToken);
 
-            var entity = new RefreshToken
+            var refreshTokenEntity = new RefreshToken
             {
 
                 UserId = user.UserId,
-                TokenHash = tokenHash,
+                TokenHash = refreshTokenHash,
                 CreatedAt = DateTime.UtcNow,
                 ExpiresAt=DateTime.UtcNow.AddDays(7),
                 IsRevoked=false
             };
 
-            await _refreshTokenRepository.AddAsync(entity);
+            await _refreshTokenRepository.AddAsync(refreshTokenEntity);
 
 
             return new TokenResponse
             {
 
                  AccessToken = accessToken,
+                 AccessTokenExpiresAt = accessTokenExpiry,
+                 
                  RefreshToken=refreshToken,
-                 ExpireAt=expiresAt
+                 RefreshTokenExpiresAt= refreshTokenEntity.ExpiresAt
 
             };
         }
@@ -79,7 +83,7 @@ namespace BusinessLayer.Tokens.Service
             if (existingToken == null)
                 return null;
 
-            if (!existingToken.IsRevoked)
+            if (existingToken.IsRevoked)
                 return null;
 
             if (existingToken.ExpiresAt < DateTime.UtcNow)
@@ -103,6 +107,29 @@ namespace BusinessLayer.Tokens.Service
 
 
 
+        }
+
+        public async Task<bool> RevokeAsync(string refreshToken)
+        {
+
+            var tokenHash = TokenHasher.HashToken(refreshToken);
+
+            var existingToken = await _refreshTokenRepository.GetByTokenAsync(tokenHash);
+
+            if (existingToken == null)
+                return false;
+
+
+            if (existingToken.IsRevoked)
+                return false;
+
+
+            existingToken.IsRevoked = true;
+            existingToken.RevokedAt=DateTime.UtcNow;
+
+            await _refreshTokenRepository.UpdateAsync(existingToken);
+
+            return true;
         }
     }
 }

@@ -1,10 +1,12 @@
-﻿using BusinessLayer.Authentication.DTOs;
+﻿using Azure;
+using BusinessLayer.Authentication.DTOs;
 using BusinessLayer.Security;
 using BusinessLayer.Tokens.Service;
 using DataAccessLayer.Respository.IRepository;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,20 +19,22 @@ namespace BusinessLayer.Authentication.Services
 
         private readonly IPasswordHasher _passwordHasher;
 
-        private readonly TokenService _tokenService;
+        private readonly IRefreshTokenService _refreshTokenService;
 
-        public AuthService(IUserRepository userRepository, IPasswordHasher passwordHasher, TokenService tokenService)
+
+        public AuthService(IUserRepository userRepository, IPasswordHasher passwordHasher,IRefreshTokenService refreshTokenService)
         {
             _passwordHasher = passwordHasher;
             _userRepository = userRepository;
-            _tokenService = tokenService;
+            _refreshTokenService = refreshTokenService;
         }
 
 
         public async Task<LoginResponse> LoginAsync(LoginRequest request)
         {
 
-            if(string.IsNullOrWhiteSpace(request.Username)  || string.IsNullOrWhiteSpace(request.Password))
+            //  Validate input
+            if (string.IsNullOrWhiteSpace(request.Username)  || string.IsNullOrWhiteSpace(request.Password))
             {
                 return new LoginResponse
                 {
@@ -39,6 +43,7 @@ namespace BusinessLayer.Authentication.Services
                 };
             }
 
+            //  Get user
             var user = await _userRepository.GetByUsernameAsync(request.Username);
 
             if (user == null)
@@ -50,7 +55,8 @@ namespace BusinessLayer.Authentication.Services
                 };
             }
 
-            if(!user.IsActive)
+            // 3️ Check active
+            if (!user.IsActive)
             {
                 return new LoginResponse
                 {
@@ -59,6 +65,7 @@ namespace BusinessLayer.Authentication.Services
                 };
             }
 
+            //  Verify password
             bool passwordIsCorrect = _passwordHasher.VerifyPassword(request.Password, user.Password);
 
             if(!passwordIsCorrect)
@@ -70,16 +77,30 @@ namespace BusinessLayer.Authentication.Services
                 };
             }
 
-            var (token, expiresAt) = _tokenService.GenerateTokenWithExpiry(user);
+            // 5. Generate AccessToken + RefreshToken
+            var tokens = await _refreshTokenService.GenerateTokensAsync(user);
 
-
+            // 6.Return response
             return new LoginResponse
             {
+
                 IsSuccess = true,
-                Message = "Login Successful",
-                AccessToken = token,
-                ExpiresAt = expiresAt
+                Message="Login Successful",
+
+                AccessToken= tokens.AccessToken,
+                AccessTokenExpiresAt=tokens.AccessTokenExpiresAt,
+
+                RefreshToken=tokens.RefreshToken,
+                RefreshTokenExpiresAt=tokens.RefreshTokenExpiresAt
+
             };
+
+
+        }
+
+        public async Task LogoutAsync(int userId)
+        {
+            await _refreshTokenService.RevokeAllAsync(userId);
 
         }
     }

@@ -11,7 +11,7 @@ using DataAccessLayer.Entities;
 
 namespace BusinessLayer.Tokens.Service
 {
-    public class TokenService
+    public class TokenService : ITokenService
     {
 
         private readonly string _key;
