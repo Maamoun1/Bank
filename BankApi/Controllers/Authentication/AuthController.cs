@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using System.Security.Claims;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace ApiBank.Controllers.Auth
 {
@@ -27,6 +28,7 @@ namespace ApiBank.Controllers.Auth
 
         // 1. LOGIN
         [HttpPost("login")]
+        [EnableRateLimiting("login")]
         public async Task<IActionResult>Login([FromBody] LoginRequest request)
         {
 
@@ -39,7 +41,7 @@ namespace ApiBank.Controllers.Auth
         }
 
         [HttpPost("refresh")]
-
+        [EnableRateLimiting("login")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
         {
 

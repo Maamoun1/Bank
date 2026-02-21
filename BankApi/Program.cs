@@ -1,4 +1,4 @@
-using ApiBank.Helpers;
+﻿using ApiBank.Helpers;
 using BusinessLayer.Security;
 using DataAccessLayer.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -11,6 +11,8 @@ using BusinessLayer.Authentication.Services;
 using BusinessLayer.Authorization.Handlers;
 using BusinessLayer.Tokens.Service;
 using BusinessLayer.Authorization.Requirements;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -75,7 +77,50 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.AddRateLimiter(options =>
+{
+    // Global limiter (apply automatically)
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+    {
+        var ip = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 
+        return RateLimitPartition.GetFixedWindowLimiter(
+            ip,
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 100,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
+            });
+    });
+
+    // Login limiter (strict)
+    options.AddPolicy("login", context =>
+    {
+        var ip = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+        Console.WriteLine($"Login attempt from IP: {ip}");
+
+        return RateLimitPartition.GetFixedWindowLimiter(
+            ip,
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 5,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
+            });
+    });
+
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.StatusCode = 429;
+
+        await context.HttpContext.Response.WriteAsJsonAsync(new
+        {
+            message = "Too many requests. Please try again later."
+        });
+    };
+});
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -160,6 +205,7 @@ app.UseHttpsRedirection();
 
 //Use CORS
 app.UseCors("BankApiCoresPloicy");
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
