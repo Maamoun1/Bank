@@ -13,6 +13,8 @@ using BusinessLayer.Tokens.Service;
 using BusinessLayer.Authorization.Requirements;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
+using StackExchange.Redis;
+using InfrastructureLayer.Caching;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +26,17 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
         options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
     });
+
+builder.Services.AddStackExchangeRedisCache(options =>
+
+  {
+      options.Configuration = builder.Configuration["Redis:ConnectionString"];
+      options.InstanceName = builder.Configuration["Redis:InstanceName"];
+
+  });
+
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 //add CORS
@@ -189,6 +202,7 @@ builder.Services.AddScoped<IPersonService, PersonService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+builder.Services.AddScoped<ICachService, RedisCacheService>();
 
 
 var app = builder.Build();
