@@ -47,9 +47,7 @@ If Redis becomes unavailable:
 * The API continues to operate normally
 
 This guarantees high availability and system resilience.
-
 --
-
 ## 🧱 Architecture Overview
 
 This project follows **Clean 3-Tier Architecture** used in Enterprise Systems:
