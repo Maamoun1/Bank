@@ -13,11 +13,11 @@ namespace BusinessLayer.Service.IService
         Task DecativeAccount(int accountId);
         Task AddAccount(CreateAccountDto dto);
         Task UpdatePassword(string accountNumber, UpdatePassword dto);    
-        bool IsAccountExist(string accountNumber);
+       Task <bool> IsAccountExistAsync(string accountNumber);
         Task<string> GetPassword(string accountNumber);
-        void Deposite(string accountNumber, double balance);
-        void Withdraw(string accountNumber, double balance);
-        double GetBalance(string pinCode);
+        Task DepositeAsync(string accountNumber, double balance);
+        Task WithdrawAsync(string accountNumber, double balance);
+        Task<double> GetBalanceAsync(string accountNumber);
 
         Task<bool> TransferAmountAsync(string senderId, string receiverId, double amount);
     }

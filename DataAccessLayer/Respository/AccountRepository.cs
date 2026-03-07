@@ -22,26 +22,33 @@ namespace DataAccessLayer.Respository
             throw new NotImplementedException();
         }
 
-        public   void Deposite(string pinCode, double balance)
+        public  async Task DepositeAsync(string accountNumber, double balance)
         {
 
-            var account = _context.Accounts.FirstOrDefault(p => p.AccountNumber == pinCode);
+            var account =  await _context.Accounts.SingleOrDefaultAsync(p => p.AccountNumber == accountNumber);
 
             if (account != null)
             {
                 account.Balance += balance;
             }
             else
-                Console.WriteLine($"not found pincode with {pinCode}");
+               throw new Exception($"not found accountNumber with {accountNumber}");
         }
 
-        public double GetBalance(string accountNumber)
+        public async Task<double?> GetBalanceAsync(string accountNumber)
         {
-            return _context.Accounts.Where(p => p.AccountNumber == accountNumber).Select(p => p.Balance).FirstOrDefault();
+
+            return await _context.Accounts
+                .AsNoTracking()
+                .Where(a => a.AccountNumber == accountNumber)
+                .Select(a => (double?)a.Balance)
+                .FirstOrDefaultAsync();
+
         }
-        public bool IsAccountExist(string pinCode)
+
+        public async Task <bool> IsAccountExist(string pinCode)
         {
-            return _context.Accounts.Where(a => a.AccountNumber == pinCode).Any();
+            return await _context.Accounts.AnyAsync(a => a.AccountNumber == pinCode);
         }
 
         public async Task<bool> TransferAmountAsync(string senderId, string receviedId, double amount)
@@ -90,10 +97,10 @@ namespace DataAccessLayer.Respository
             _context.Update(account);
         }
 
-        public void Withdraw(string pinCode, double balance)
+        public async Task WithdrawAsync(string accountNumber, double balance)
         {
 
-            Deposite(pinCode, balance * -1);
+            await DepositeAsync(accountNumber, balance * -1);
         }
     }
 }

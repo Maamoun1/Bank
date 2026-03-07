@@ -21,11 +21,13 @@ namespace BusinessLayer.Service
     {
 
         private readonly IUnitOfWork _unitOfWork;
-
-        public AccountService(IAccountRepository accountRepository, IUnitOfWork unitOfWork) : base(accountRepository)
+        
+        private readonly ICacheService _cache;
+        public AccountService(IAccountRepository accountRepository, IUnitOfWork unitOfWork,ICacheService cahche) : base(accountRepository)
         {
 
             _unitOfWork = unitOfWork;
+            _cache = cahche;
         }
 
         public Task DecativeAccount(int accountId)
@@ -80,31 +82,53 @@ namespace BusinessLayer.Service
                 return $"Not account with [{accountNumber}]";
         }
 
-        public bool IsAccountExist(string accountNumber)
+        public  async Task <bool> IsAccountExistAsync(string accountNumber)
         {
-            return _unitOfWork.Account.IsAccountExist(accountNumber);
+            return await _unitOfWork.Account.IsAccountExist(accountNumber);
         }
 
-        public void Deposite(string accountNumber, double balance)
+        public async Task DepositeAsync(string accountNumber, double balance)
         {
 
-            if (balance < 100 || !IsAccountExist(accountNumber))
-                Console.WriteLine("Balance must be increase 100 or an account is not exist");
-            else
-                _unitOfWork.Account.Deposite(accountNumber, balance); 
+            if (balance < 100 || !await IsAccountExistAsync(accountNumber))
+               throw new Exception("Balance must be increase 100 or an account is not exist");
+            
+              await  _unitOfWork.Account.DepositeAsync(accountNumber, balance);
+              await _unitOfWork.SaveAsync();
+
+
+            var cacheKey = CacheKeys.Balance(accountNumber);
+            await _cache.RemoveAsync(cacheKey);
         }
 
-        public void Withdraw(string accountNumber, double balance)
+        public async Task WithdrawAsync(string accountNumber, double balance)
         {
-            if (balance < 100 || !IsAccountExist(accountNumber))
-                Console.WriteLine("Balance must be increase 100 or an account is not exist");
-            else
-                _unitOfWork.Account.Withdraw(accountNumber, balance);
-        }
+            if (balance < 100 || !await IsAccountExistAsync(accountNumber))
+                throw new Exception("Balance must be increase 100 or account does not exist");
 
-        public double  GetBalance(string accountNumber)
-        {
-            return _unitOfWork.Account.GetBalance(accountNumber);
+            var lockKey = $"lock:account:{accountNumber}";
+            var lockValue = Guid.NewGuid().ToString();
+
+            try
+            {
+                // Acquire Lock
+                await _cache.SetAsync(lockKey, lockValue, TimeSpan.FromSeconds(5));
+
+                // Withdraw from database
+                await _unitOfWork.Account.WithdrawAsync(accountNumber, balance);
+
+                // Save changes
+                await _unitOfWork.SaveAsync();
+
+                // Invalidate cache
+                var cacheKey = CacheKeys.Balance(accountNumber);
+                await _cache.RemoveAsync(cacheKey);
+            }
+            finally
+            {
+                // Release Lock
+                await _cache.RemoveAsync(lockKey);
+            }
         }
 
         public async Task<bool> TransferAmountAsync(string senderId, string receiverId, double amount)
@@ -117,6 +141,33 @@ namespace BusinessLayer.Service
             }
 
             return await _unitOfWork.Account.TransferAmountAsync(senderId, receiverId, amount);
+        }
+
+        public async Task<double> GetBalanceAsync(string accountNumber)
+        {
+
+            var cachekey = CacheKeys.Balance(accountNumber);
+
+            //cacahe redis
+            var cachedBalance = await _cache.GetAsync<double?>(cachekey);
+
+            if (cachedBalance !=  null)
+                return cachedBalance.Value;
+
+            //Fallback to database
+            var balance = await _unitOfWork.Account.GetBalanceAsync(accountNumber);
+
+
+            if (balance is null)
+                throw new Exception("Account is not found");
+
+
+            await _cache.SetAsync(cachekey, balance.Value,TimeSpan.FromMinutes(5));
+
+
+
+            return balance.Value;
+
         }
     }
 }

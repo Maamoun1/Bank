@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 using StackExchange.Redis;
 using InfrastructureLayer.Caching;
+using BusinessLayer.Service.IService;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -202,7 +203,7 @@ builder.Services.AddScoped<IPersonService, PersonService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
-builder.Services.AddScoped<ICachService, RedisCacheService>();
+builder.Services.AddScoped<ICacheService, RedisCacheService>();
 
 
 var app = builder.Build();

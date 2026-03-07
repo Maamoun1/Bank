@@ -92,7 +92,7 @@ namespace ApiBank.Controllers.Account
                     return BadRequest($"Not Accepted ID: {accountNumber}");
                 }
 
-                double balance= _accountService.GetBalance(accountNumber);
+                double balance= await _accountService.GetBalanceAsync(accountNumber);
 
                 return Ok(new { success = true, data = balance });
             }
@@ -157,11 +157,12 @@ namespace ApiBank.Controllers.Account
             if (string.IsNullOrWhiteSpace(AccountNumber))
                 return BadRequest($"Not Accepted ID: {AccountNumber}");
 
-            if (!_accountService.IsAccountExist(AccountNumber))
+            if (!await _accountService.IsAccountExistAsync(AccountNumber))
                 NotFound("Account is not Found exist..");
 
+            
+
             await _accountService.UpdatePassword(AccountNumber, dto);
-            await _accountService.SaveChanges();
 
             return Ok(dto);
         }
@@ -172,13 +173,16 @@ namespace ApiBank.Controllers.Account
         {
 
             if (string.IsNullOrWhiteSpace(accountNumber))
-              return  BadRequest($"Not Accepted {accountNumber}");
+              return  BadRequest($"Account Number is required {accountNumber}");
 
-            if (!_accountService.IsAccountExist(accountNumber))
+            if(balance <= 0)
+                return BadRequest($"Balance must be greater than zero {balance}");
+
+
+            if (!await _accountService.IsAccountExistAsync(accountNumber))
               return  NotFound("Account is not exist");
 
-             _accountService.Deposite(accountNumber, balance);
-             await _accountService.SaveChanges();
+            await _accountService.DepositeAsync(accountNumber, balance);
 
             return Ok("Success deposite");
         }
@@ -190,13 +194,13 @@ namespace ApiBank.Controllers.Account
             if (string.IsNullOrWhiteSpace(accountNumber))
               return  BadRequest($"Not Accepted {accountNumber}");
 
-            if (!_accountService.IsAccountExist(accountNumber))
+            if (!await _accountService.IsAccountExistAsync(accountNumber))
               return  NotFound("Account is not exist");
 
-             _accountService.Withdraw(accountNumber, balance);
+           await  _accountService.WithdrawAsync(accountNumber, balance);
              await _accountService.SaveChanges();
 
-            return Ok("Ahmed adel is a super hero");
+            return Ok("Withdrawal Succeed");
         }
 
 
