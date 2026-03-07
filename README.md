@@ -12,6 +12,8 @@ This system simulates real-world banking backend operations with a strong focus 
 * **JWT Authentication** with short-lived **Access Tokens (30 minutes)**
 * **Secure Refresh Token System** with **Rotation and Revocation**
 * **Rate Limiting Protection** against Brute Force and API Abuse
+* **Redis Distributed Caching** for high-performance Get Balance
+* **Cache Invalidation Strategy** to maintain data consistency after transactions
 * **Repository Pattern** for clean and maintainable data access
 * **Unit of Work Pattern** for transaction consistency
 * **DTO Pattern** to protect internal entities
@@ -21,6 +23,32 @@ This system simulates real-world banking backend operations with a strong focus 
 * **RESTful API Design**
 
 ---
+
+## ⚡Redis Distributed Caching
+To improve API performance and reduce database load, the system integrates **Redis Distributed Cache**.
+**Cache Strategy**
+* Account Balance is cached using Redis to reduce repeated database queries.
+* Cached data is stored using structured cache keys following a clear naming convention.
+Example:
+account:{accountNumber}
+
+**Cache Expiration**
+Cached data uses Absolute Expiration to ensure stale data is automatically removed after a defined time window.
+**Cache Invalidation**
+To ensure data consistency, the system automatically invalidates cache entries when account data changes.
+Cache is invalidated when:
+* Deposit Operation
+* Withdraw Operation
+This ensures that the next request retrieves fresh data from the database and re-populates the cache.
+**Fallback Strategy**
+Redis is used as an optimization layer only.
+If Redis becomes unavailable:
+* The system falls back to the database
+* The API continues to operate normally
+
+This guarantees high availability and system resilience.
+
+--
 
 ## 🧱 Architecture Overview
 
@@ -100,14 +128,19 @@ Protects the API against Brute Force attacks.
 
 1.  **Clone the repo:**
     ```bash
-    git clone [https://github.com/yourusername/BankApi.git](https://github.com/yourusername/BankApi.git)
+    git clone [https://github.com/Maamoun1/BankApi.git](https://github.com/yourusername/BankApi.git)
     ```
 2.  **Update Connection String** in `appsettings.json`.
-3.  **Update Database:**
+
+3. **Run Redis(Docker)**
+    ```bash
+    docker run -d -p 6379:6379 --name bank-redis redis
+
+4.  **Update Database:**
     ```bash
     dotnet ef database update
     ```
-4.  **Run Project** and navigate to `/swagger`.
+5.  **Run Project** and navigate to `/swagger`.
 
 ---
 
