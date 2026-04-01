@@ -13,7 +13,7 @@ public  class TbAccount
 
     public string AccountNumber { get; set; } = null!;
 
-    public string Password { get; set; } = null!;
+    public string PinHash { get; set; } = null!;
 
     public DateTime IssueDate { get; set; }
 

@@ -1,189 +1,164 @@
-﻿using BusinessLayer.Authorization;
-using BusinessLayer.DTOs.People;
-using BusinessLayer.DTOs.User;
-using Microsoft.AspNetCore.Authentication;
+﻿using BusinessLayer.DTOs.User;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace ApiBank.Controllers.User
 {
-
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
-
         private readonly IUserService _userService;
-
         private readonly IAuthorizationService _authorizationService;
+
         public UserController(IUserService userService, IAuthorizationService authorizationService)
         {
             _userService = userService;
             _authorizationService = authorizationService;
         }
 
-        [Authorize("Roles=Admin")]
+        // -------------------------------------------------------------------
+        // GET ALL  (Admin only)
+        // Fixed: was [Authorize("Roles=Admin")] — wrong syntax, treated as a
+        // non-existent policy name so the role check never ran.
+        // -------------------------------------------------------------------
+
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                var lstUser = await _userService.GetAllAsync();
-
-                return Ok(new { success = true, data = lstUser });
+                var users = await _userService.GetAllAsync();
+                return Ok(new { success = true, data = users });
             }
-
-            catch (Exception ex)
+            catch (Exception)
             {
-                return StatusCode(500, new { success = false, message = "An Error Occurred while retriving Person." });
+                return StatusCode(500, new { success = false, message = "An error occurred while retrieving users." });
             }
         }
 
-        [HttpGet("GetByID{userId}", Name = "GetUserByID")]
+        [HttpGet("GetByID/{userId}", Name = "GetUserByID")]
         public async Task<IActionResult> GetUserByID(int userId)
         {
-
             var authResult = await _authorizationService.AuthorizeAsync(User, userId, "SameUserPolicy");
             if (!authResult.Succeeded)
-            {
                 return Unauthorized();
-            }
 
             try
             {
-
                 if (userId < 0)
-                {
-                    return BadRequest($"Not Accepted ID: {userId}");
-                }
-                
+                    return BadRequest(new { success = false, message = $"Invalid ID: {userId}" });
+
                 var currentUserIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(currentUserIdClaim) || !int.TryParse(currentUserIdClaim, out int currentUserId))
+                    return Unauthorized(new { success = false, message = "Invalid user identity." });
 
-                if(string.IsNullOrEmpty(currentUserIdClaim) || !int.TryParse(currentUserIdClaim, out int currentUserId))
-                {
-                    return Unauthorized("Invalid User identity.");
-                }
-
-                if(userId != currentUserId && !User.IsInRole("Admin"))
-                {
-                    return StatusCode(403, new { success = false, message = "Forbidden: You are not authorized to access another user's information" });
-                }
-
+                if (userId != currentUserId && !User.IsInRole("Admin"))
+                    return StatusCode(403, new { success = false, message = "Forbidden: You cannot access another user's information." });
 
                 var user = await _userService.GetAsync(u => u.UserId == userId, "Person,Person.NationalityCountry");
 
-                if (user != null)
-                {
-                    ReteriveUserDto reteriveUserdto = new ReteriveUserDto()
-                    {
-                        userId = userId,
-                        UserName = user.UserName,
-                       FullName= user.Person.FirstName+' ' + user.Person.LastName,
-                        IsActive = user.IsActive,
-                        DateOfBirth = user.Person.DateOfBirth,
-                        CountryName = user.Person.NationalityCountry.CountryName
-                    };
+                if (user == null)
+                    return NotFound(new { success = false, message = $"User with ID {userId} not found." });
 
-                    return Ok(new { success = true, data = reteriveUserdto });
-                }
-
-                else
+                var dto = new ReteriveUserDto
                 {
-                    return NotFound($"User with ID {userId} Not Found.");
-                }
+                    userId = userId,
+                    UserName = user.UserName,
+                    FullName = user.Person.FirstName + " " + user.Person.LastName,
+                    IsActive = user.IsActive,
+                    DateOfBirth = user.Person.DateOfBirth,
+                    CountryName = user.Person.NationalityCountry.CountryName,
+                };
+
+                return Ok(new { success = true, data = dto });
             }
-
-            catch (Exception ex)
+            catch (Exception)
             {
-                return StatusCode(500, new { success = false, message = "An Error Occurred while retriving User." });
+                return StatusCode(500, new { success = false, message = "An error occurred while retrieving the user." });
             }
         }
 
-
-        [HttpGet("IsExist{userId:int}", Name = "IsUserExist")]
-        public async Task<IActionResult> IsExist(int userId)
+        [HttpGet("IsExist/{userId:int}", Name = "IsUserExist")]
+        public IActionResult IsExist(int userId)
         {
-
             if (userId < 0)
-            {
-                return BadRequest($"Not Accepted ID: {userId}");
-            }
-
+                return BadRequest(new { success = false, message = $"Invalid ID: {userId}" });
 
             var currentUserIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(currentUserIdClaim) || !int.TryParse(currentUserIdClaim, out int currentUserId))
-            {
-                return Unauthorized("Invalid user identity");
-            }
-
+                return Unauthorized(new { success = false, message = "Invalid user identity." });
 
             if (userId != currentUserId && !User.IsInRole("Admin"))
-            {
-                return StatusCode(403, new { success = false, message = "Forbidden: You are not authorized to access another user's information" });
-            }
+                return StatusCode(403, new { success = false, message = "Forbidden: You cannot access another user's information." });
 
             if (_userService.IsUserExist(userId))
-            {
-                return Ok(new { success = true, data = "User is exist" });
-            }
+                return Ok(new { success = true, message = "User exists." });
 
-            return NotFound($"User with ID :{userId} is not found.");
-
+            return NotFound(new { success = false, message = $"User with ID {userId} not found." });
         }
 
 
+        [Authorize(Roles = "Admin")]
         [HttpPost(Name = "AddUser")]
-        public async Task<IActionResult> AddPerson(CreateUserDto dto)
+        public async Task<IActionResult> AddUser([FromBody] CreateUserDto dto)
         {
-
             if (dto == null)
-            {
-                return BadRequest("Invalid Person data.");
-            }
+                return BadRequest(new { success = false, message = "Invalid user data." });
 
             await _userService.Add(dto);
             await _userService.SaveChanges();
-            return Ok(dto);
+
+            // Never return the DTO — it contains the plain-text password supplied by the caller.
+            return Ok(new { success = true, message = "User created successfully." });
         }
 
 
-        [HttpPut(Name = "UpdateUser")]
-        public async Task<IActionResult> UpdateUser(int userId, UpdateUserDto dto)
+        [HttpPut("{userId}", Name = "UpdateUser")]
+        public async Task<IActionResult> UpdateUser(int userId, [FromBody] UpdateUserDto dto)
         {
-            
             if (userId < 0)
-                return BadRequest($"Not Accepted ID: {userId}");
+                return BadRequest(new { success = false, message = $"Invalid ID: {userId}" });
 
-            if (!_userService.IsUserExist(userId))
-                NotFound("Person is not Found exist..");
+            if (dto == null)
+                return BadRequest(new { success = false, message = "Invalid user data." });
 
-            await _userService.Update(userId, dto);
-            await _userService.SaveChanges();
+            try
+            {
+                await _userService.Update(userId, dto);
+                await _userService.SaveChanges();
 
-            return Ok(dto);
+                return Ok(new { success = true, message = "User updated successfully." });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { success = false, message = ex.Message });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { success = false, message = "An error occurred while updating the user." });
+            }
         }
 
-
-        [HttpDelete("Delete{userId}", Name = "DeleteUser")]
-        public async Task<IActionResult> DeletePerson(int userId)
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("Delete/{userId}", Name = "DeleteUser")]
+        public async Task<IActionResult> DeleteUser(int userId)
         {
-
             if (userId < 0)
-                return BadRequest($"Not Accepted ID {userId}");
+                return BadRequest(new { success = false, message = $"Invalid ID: {userId}" });
 
             var user = await _userService.GetAsync(u => u.UserId == userId);
 
             if (user == null)
-                return NotFound($"User with ID {user} not found..");
+                return NotFound(new { success = false, message = $"User with ID {userId} not found." });
 
-            
             _userService.Remove(user);
             await _userService.SaveChanges();
 
-            return Ok($"User with ID {userId} has been deleted.");
+            return Ok(new { success = true, message = $"User with ID {userId} has been deleted." });
         }
     }
 }

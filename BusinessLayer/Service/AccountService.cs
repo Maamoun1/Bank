@@ -1,33 +1,149 @@
 ﻿using BusinessLayer.DTOs.Accounts;
 using BusinessLayer.Global_Class;
+using BusinessLayer.Security;
 using BusinessLayer.Service.IService;
 using DataAccessLayer.Entities;
-using DataAccessLayer.Respository;
 using DataAccessLayer.Respository.IRepository;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.InteropServices.Marshalling;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLayer.Service
 {
     public class AccountService : GenericService<TbAccount>, IAccountService
     {
-
         private readonly IUnitOfWork _unitOfWork;
-        
         private readonly ICacheService _cache;
-        public AccountService(IAccountRepository accountRepository, IUnitOfWork unitOfWork,ICacheService cahche) : base(accountRepository)
-        {
+        private readonly IPasswordHasher _passwordHasher;
 
+        public AccountService(
+            IAccountRepository accountRepository,
+            IUnitOfWork unitOfWork,
+            ICacheService cache,
+            IPasswordHasher passwordHasher) : base(accountRepository)
+        {
             _unitOfWork = unitOfWork;
-            _cache = cahche;
+            _cache = cache;
+            _passwordHasher = passwordHasher;
+        }
+
+        public async Task AddAccount(CreateAccountDto dto)
+        {
+            // Caller provides a PIN or the service generates one.
+            // Either way only the BCrypt hash is persisted — plaintext is
+            // discarded after hashing and must be given to the client via
+            // a secure out-of-band channel by the calling layer.
+            var plainPin = string.IsNullOrWhiteSpace(dto.InitialPin)
+                ? GenerateRandomPin()
+                : dto.InitialPin;
+
+            var newAccount = new TbAccount
+            {
+                ApplicationId = dto.ApplicationId,
+                ClientId = dto.ClientId,
+                AccountNumber = Util.GenerateAccountNumber(5),
+                PinHash = _passwordHasher.HashPassword(plainPin),
+                IssueDate = DateTime.UtcNow,
+                ExpirationDate = DateTime.UtcNow.AddYears(3),
+                IssueReason = dto.IssueReason,
+                Balance = 0,
+                IsActive = true,
+                CreatedByUserId = dto.CreatedByUserId,
+            };
+
+            await _unitOfWork.Account.AddAsync(newAccount);
+        }
+
+        public async Task<bool> VerifyPinAsync(string accountNumber, string submittedPin)
+        {
+            if (string.IsNullOrWhiteSpace(accountNumber) || string.IsNullOrWhiteSpace(submittedPin))
+                return false;
+
+            // tracked: true so EF returns the live entity with PinHash populated.
+            var account = await _unitOfWork.Account.GetAsync(
+                a => a.AccountNumber == accountNumber,
+                includeProperties: null,
+                tracked: true);
+
+            if (account == null || !account.IsActive)
+                return false;
+
+            return _passwordHasher.VerifyPassword(submittedPin, account.PinHash);
+        }
+
+        public async Task UpdatePinAsync(string accountNumber, UpdatePinDto dto)
+        {
+            var account = await _unitOfWork.Account.GetAsync(
+                a => a.AccountNumber == accountNumber,
+                includeProperties: null,
+                tracked: true);
+
+            if (account == null)
+                throw new KeyNotFoundException($"Account '{accountNumber}' was not found.");
+
+            if (!_passwordHasher.VerifyPassword(dto.CurrentPin, account.PinHash))
+                throw new InvalidOperationException("Current PIN is incorrect.");
+
+            account.PinHash = _passwordHasher.HashPassword(dto.NewPin);
+            _unitOfWork.Account.Update(account);
+        }
+
+ 
+        public async Task<double> GetBalanceAsync(string accountNumber)
+        {
+            var cacheKey = CacheKeys.Balance(accountNumber);
+
+            var cachedBalance = await _cache.GetAsync<double?>(cacheKey);
+            if (cachedBalance != null)
+                return cachedBalance.Value;
+
+            var balance = await _unitOfWork.Account.GetBalanceAsync(accountNumber);
+
+            if (balance is null)
+                throw new KeyNotFoundException($"Account '{accountNumber}' was not found.");
+
+            await _cache.SetAsync(cacheKey, balance.Value, TimeSpan.FromMinutes(5));
+
+            return balance.Value;
+        }
+
+        public async Task DepositeAsync(string accountNumber, double balance)
+        {
+            if (balance < 100)
+                throw new ArgumentException("Deposit amount must be at least 100.");
+
+            if (!await IsAccountExistAsync(accountNumber))
+                throw new KeyNotFoundException($"Account '{accountNumber}' was not found.");
+
+            await _unitOfWork.Account.DepositeAsync(accountNumber, balance);
+            await _unitOfWork.SaveAsync();
+
+            await _cache.RemoveAsync(CacheKeys.Balance(accountNumber));
+        }
+
+        public async Task WithdrawAsync(string accountNumber, double balance)
+        {
+            if (balance < 100)
+                throw new ArgumentException("Withdrawal amount must be at least 100.");
+
+            if (!await IsAccountExistAsync(accountNumber))
+                throw new KeyNotFoundException($"Account '{accountNumber}' was not found.");
+
+            await _unitOfWork.Account.WithdrawAsync(accountNumber, balance);
+            await _unitOfWork.SaveAsync();
+
+            await _cache.RemoveAsync(CacheKeys.Balance(accountNumber));
+        }
+
+
+        public async Task<bool> TransferAmountAsync(string senderId, string receiverId, double amount)
+        {
+            if (amount <= 0)
+                throw new ArgumentException("Transfer amount must be greater than zero.");
+
+            return await _unitOfWork.Account.TransferAmountAsync(senderId, receiverId, amount);
+        }
+
+        public async Task<bool> IsAccountExistAsync(string accountNumber)
+        {
+            return await _unitOfWork.Account.IsAccountExist(accountNumber);
         }
 
         public Task DecativeAccount(int accountId)
@@ -36,138 +152,13 @@ namespace BusinessLayer.Service
         }
 
 
-        public  async Task AddAccount(CreateAccountDto dto)
+        private static string GenerateRandomPin(int length = 6)
         {
-
-            var newAccount = new TbAccount()
-            {
-                ApplicationId = dto.ApplicationId,
-                ClientId = dto.ClientId,
-                AccountNumber = Util.GenerateAccountNumber(5),
-                Password = Util.Encrypt(Util.password, Util.GetPublicKey()),
-                IssueDate = DateTime.Now,
-                ExpirationDate = DateTime.Now.AddYears(3),
-                IssueReason = dto.IssueReason,
-                Balance = 0,
-                IsActive = true,
-                CreatedByUserId = dto.CreatedByUserId,
-            };
-            await _unitOfWork.Account.AddAsync(newAccount);
-
-        }
-
-        public async Task UpdatePassword(string accountNumber, UpdatePassword dto)
-        {
-
-            var accountFromDb = await _unitOfWork.Account.GetAsync(p => p.AccountNumber == accountNumber);
-
-            if (accountFromDb != null)
-            {
-                
-                accountFromDb.Password = Util.Encrypt(dto.Password, Util.GetPublicKey());
-                _unitOfWork.Account.Update(accountFromDb);
-            }
-        }
-
-        public async Task<string> GetPassword(string accountNumber)
-        {
-            
-            var accountFromDb = await _unitOfWork.Account.GetAsync(p => p.AccountNumber == accountNumber, null, true);
-
-            if (accountFromDb != null)
-            {
-                return Util.Decrypt(accountFromDb.Password, Util.GetPrivateKey());
-            }
-            else
-                return $"Not account with [{accountNumber}]";
-        }
-
-        public  async Task <bool> IsAccountExistAsync(string accountNumber)
-        {
-            return await _unitOfWork.Account.IsAccountExist(accountNumber);
-        }
-
-        public async Task DepositeAsync(string accountNumber, double balance)
-        {
-
-            if (balance < 100 || !await IsAccountExistAsync(accountNumber))
-               throw new Exception("Balance must be increase 100 or an account is not exist");
-            
-              await  _unitOfWork.Account.DepositeAsync(accountNumber, balance);
-              await _unitOfWork.SaveAsync();
-
-
-            var cacheKey = CacheKeys.Balance(accountNumber);
-            await _cache.RemoveAsync(cacheKey);
-        }
-
-        public async Task WithdrawAsync(string accountNumber, double balance)
-        {
-            if (balance < 100 || !await IsAccountExistAsync(accountNumber))
-                throw new Exception("Balance must be increase 100 or account does not exist");
-
-            var lockKey = $"lock:account:{accountNumber}";
-            var lockValue = Guid.NewGuid().ToString();
-
-            try
-            {
-                // Acquire Lock
-                await _cache.SetAsync(lockKey, lockValue, TimeSpan.FromSeconds(5));
-
-                // Withdraw from database
-                await _unitOfWork.Account.WithdrawAsync(accountNumber, balance);
-
-                // Save changes
-                await _unitOfWork.SaveAsync();
-
-                // Invalidate cache
-                var cacheKey = CacheKeys.Balance(accountNumber);
-                await _cache.RemoveAsync(cacheKey);
-            }
-            finally
-            {
-                // Release Lock
-                await _cache.RemoveAsync(lockKey);
-            }
-        }
-
-        public async Task<bool> TransferAmountAsync(string senderId, string receiverId, double amount)
-        {
-
-            if (amount < 0)
-            {
-                Console.WriteLine("Amount must be increase 0");
-                return false;
-            }
-
-            return await _unitOfWork.Account.TransferAmountAsync(senderId, receiverId, amount);
-        }
-
-        public async Task<double> GetBalanceAsync(string accountNumber)
-        {
-
-            var cachekey = CacheKeys.Balance(accountNumber);
-
-            //cacahe redis
-            var cachedBalance = await _cache.GetAsync<double?>(cachekey);
-
-            if (cachedBalance !=  null)
-                return cachedBalance.Value;
-
-            //Fallback to database
-            var balance = await _unitOfWork.Account.GetBalanceAsync(accountNumber);
-
-
-            if (balance is null)
-                throw new Exception("Account is not found");
-
-
-            await _cache.SetAsync(cachekey, balance.Value,TimeSpan.FromMinutes(5));
-
-
-
-            return balance.Value;
-
+            var rng = System.Security.Cryptography.RandomNumberGenerator.Create();
+            var bytes = new byte[length];
+            rng.GetBytes(bytes);
+            // Map each byte to a digit 0-9
+            return string.Concat(bytes.Select(b => (b % 10).ToString()));
         }
     }
 }

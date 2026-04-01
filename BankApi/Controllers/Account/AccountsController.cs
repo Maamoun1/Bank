@@ -1,7 +1,5 @@
 ﻿using BusinessLayer.DTOs.Accounts;
-using BusinessLayer.DTOs.People;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiBank.Controllers.Account
@@ -11,7 +9,6 @@ namespace ApiBank.Controllers.Account
     [ApiController]
     public class AccountsController : ControllerBase
     {
-
         private readonly IAccountService _accountService;
 
         public AccountsController(IAccountService accountService)
@@ -25,201 +22,202 @@ namespace ApiBank.Controllers.Account
         {
             try
             {
-
-                var lstAccounts =await _accountService.GetAllAsync();
-
-                return Ok(new { success = true, data = lstAccounts });
+                var accounts = await _accountService.GetAllAsync();
+                return Ok(new { success = true, data = accounts });
             }
-
-            catch (Exception ex)
+            catch (Exception)
             {
-                return StatusCode(500, new { success = false, message = "An Error Occurred while retriving an Account." });
+                return StatusCode(500, new { success = false, message = "An error occurred while retrieving accounts." });
             }
         }
 
-
-        [HttpGet("GetByID/{accountId}", Name = "GetAccountByID")]
-        public async Task<IActionResult> GetAccountByID(string accountNumber)
+        [HttpGet("GetByAccountNumber/{accountNumber}", Name = "GetAccountByNumber")]
+        public async Task<IActionResult> GetAccountByNumber(string accountNumber)
         {
-
             try
             {
-
                 if (string.IsNullOrWhiteSpace(accountNumber))
+                    return BadRequest(new { success = false, message = "Account number is required." });
+
+                var account = await _accountService.GetAsync(
+                    a => a.AccountNumber == accountNumber,
+                    "Application,Client,CreatedByUser,Client.Person");
+
+                if (account == null)
+                    return NotFound(new { success = false, message = $"Account '{accountNumber}' not found." });
+
+                var dto = new ReteriveAccountDto
                 {
-                    return BadRequest($"Not Accepted ID: {accountNumber}");
-                }
+                    AccountNumber = account.AccountNumber,
+                    ClientName = account.Client.Person.FirstName + " " + account.Client.Person.LastName,
+                    IssueReason = account.IssueReason,
+                    Balance = account.Balance,
+                    IsActive = account.IsActive,
+                };
 
-                var account = await _accountService.GetAsync(a => a.AccountNumber == accountNumber, "Application,Client,CreatedByUser,Client.Person");
-
-                if (account != null)
-                {
-                    ReteriveAccountDto reteriveAccountDto = new ReteriveAccountDto()
-                    {
-                        AccountNumber = accountNumber,
-                        ClientName=account.Client.Person.FirstName+' '+ account.Client.Person.LastName,
-                        IssueReason = account.IssueReason,
-                        Balance = account.Balance,
-                        IsActive = account.IsActive,
-
-                    };
-                    return Ok(new { success = true, data = reteriveAccountDto });
-                }
-
-                else
-                {
-                    return NotFound($"account with ID {accountNumber} Not Found.");
-                }
+                return Ok(new { success = true, data = dto });
             }
-
-            catch (Exception ex)
+            catch (Exception)
             {
-                return StatusCode(500, new { success = false, message = "An Error Occurred while retriving an Account." });
+                return StatusCode(500, new { success = false, message = "An error occurred while retrieving the account." });
             }
-
         }
-
 
         [HttpGet("GetBalance/{accountNumber}", Name = "GetBalance")]
-        public async Task<IActionResult> GeBalance(string accountNumber)
+        public async Task<IActionResult> GetBalance(string accountNumber)
         {
-
             try
             {
+                if (string.IsNullOrWhiteSpace(accountNumber))
+                    return BadRequest(new { success = false, message = "Account number is required." });
 
-                if (accountNumber == "")
-                {
-                    return BadRequest($"Not Accepted ID: {accountNumber}");
-                }
-
-                double balance= await _accountService.GetBalanceAsync(accountNumber);
-
+                var balance = await _accountService.GetBalanceAsync(accountNumber);
                 return Ok(new { success = true, data = balance });
             }
-
-            catch (Exception ex)
+            catch (KeyNotFoundException ex)
             {
-                return StatusCode(500, new { success = false, message = "An Error Occurred while retriving a balance." });
+                return NotFound(new { success = false, message = ex.Message });
             }
-
+            catch (Exception)
+            {
+                return StatusCode(500, new { success = false, message = "An error occurred while retrieving the balance." });
+            }
         }
-
-
-        [HttpGet("GetPassword/{pinCode}", Name = "GetPassword")]
-        public async Task<IActionResult> GetPassword(string pinCode)
-        {
-
-            try
-            {
-
-                if (pinCode =="")
-                {
-                    return BadRequest($"Not Accepted ID: {pinCode}");
-                }
-
-                var accountPassword = await _accountService.GetPassword(pinCode);
-
-                return Ok(new { success = true, data = accountPassword });
-
-                //else
-                //{
-                //    return NotFound($"account with ID {pinCode} Not Found.");
-                //}
-            }
-
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { success = false, message = "An Error Occurred while retriving an Account." });
-            }
-
-        }
-
 
         [HttpPost(Name = "AddAccount")]
-        public async Task<IActionResult> AddAccount(CreateAccountDto dto)
+        public async Task<IActionResult> AddAccount([FromBody] CreateAccountDto dto)
         {
-
             if (dto == null)
-            {
-                return BadRequest("Invalid Person data.");
-            }
+                return BadRequest(new { success = false, message = "Invalid account data." });
 
             await _accountService.AddAccount(dto);
             await _accountService.SaveChanges();
-            return Ok(dto);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Account created successfully. The PIN has been issued via the secure channel."
+            });
+        }
+
+        [HttpPost("VerifyPin", Name = "VerifyPin")]
+        public async Task<IActionResult> VerifyPin([FromBody] VerifyPinDto dto)
+        {
+            if (dto == null)
+                return BadRequest(new { success = false, message = "Invalid request." });
+
+            var isValid = await _accountService.VerifyPinAsync(dto.AccountNumber, dto.Pin);
+
+            if (!isValid)
+                return Unauthorized(new { success = false, message = "Invalid PIN." });
+
+            return Ok(new { success = true, message = "PIN verified." });
         }
 
 
-        [HttpPut("UpdateAccount")]
-        public async Task<IActionResult> UpdateAccount(string AccountNumber, UpdatePassword dto)
+        [HttpPut("ChangePin/{accountNumber}", Name = "ChangePin")]
+        public async Task<IActionResult> ChangePin(string accountNumber, [FromBody] UpdatePinDto dto)
         {
-
-            if (string.IsNullOrWhiteSpace(AccountNumber))
-                return BadRequest($"Not Accepted ID: {AccountNumber}");
-
-            if (!await _accountService.IsAccountExistAsync(AccountNumber))
-                NotFound("Account is not Found exist..");
-
-            
-
-            await _accountService.UpdatePassword(AccountNumber, dto);
-
-            return Ok(dto);
-        }
-
-
-        [HttpPut("Deposite")]
-        public async Task<IActionResult>Deposite(string accountNumber, double balance)
-        {
-
             if (string.IsNullOrWhiteSpace(accountNumber))
-              return  BadRequest($"Account Number is required {accountNumber}");
+                return BadRequest(new { success = false, message = "Account number is required." });
 
-            if(balance <= 0)
-                return BadRequest($"Balance must be greater than zero {balance}");
+            if (dto == null)
+                return BadRequest(new { success = false, message = "Invalid request body." });
 
+            try
+            {
+                await _accountService.UpdatePinAsync(accountNumber, dto);
+                await _accountService.SaveChanges();
 
-            if (!await _accountService.IsAccountExistAsync(accountNumber))
-              return  NotFound("Account is not exist");
-
-            await _accountService.DepositeAsync(accountNumber, balance);
-
-            return Ok("Success deposite");
+                return Ok(new { success = true, message = "PIN changed successfully." });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { success = false, message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Wrong current PIN — return 401 so callers know it's an auth failure
+                return Unauthorized(new { success = false, message = ex.Message });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { success = false, message = "An error occurred while changing the PIN." });
+            }
         }
 
-         [HttpPut("Withdraw")]
-        public async Task<IActionResult>Withdraw(string accountNumber, double balance)
+        [HttpPut("Deposit")]
+        public async Task<IActionResult> Deposit(string accountNumber, double balance)
         {
-
             if (string.IsNullOrWhiteSpace(accountNumber))
-              return  BadRequest($"Not Accepted {accountNumber}");
+                return BadRequest(new { success = false, message = "Account number is required." });
 
-            if (!await _accountService.IsAccountExistAsync(accountNumber))
-              return  NotFound("Account is not exist");
+            try
+            {
+                await _accountService.DepositeAsync(accountNumber, balance);
+                return Ok(new { success = true, message = "Deposit successful." });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { success = false, message = ex.Message });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { success = false, message = "An error occurred during deposit." });
+            }
+        }
 
-           await  _accountService.WithdrawAsync(accountNumber, balance);
-             await _accountService.SaveChanges();
+        [HttpPut("Withdraw")]
+        public async Task<IActionResult> Withdraw(string accountNumber, double balance)
+        {
+            if (string.IsNullOrWhiteSpace(accountNumber))
+                return BadRequest(new { success = false, message = "Account number is required." });
 
-            return Ok("Withdrawal Succeed");
+            try
+            {
+                await _accountService.WithdrawAsync(accountNumber, balance);
+                return Ok(new { success = true, message = "Withdrawal successful." });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { success = false, message = ex.Message });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { success = false, message = "An error occurred during withdrawal." });
+            }
         }
 
 
         [HttpPut("Transfer")]
-        public async Task<IActionResult> TransferAmount(string senderId,string receiverId, double balance)
+        public async Task<IActionResult> TransferAmount(string senderId, string receiverId, double balance)
         {
-
-            if (await _accountService.TransferAmountAsync(senderId, receiverId, balance))
+            try
             {
+                var success = await _accountService.TransferAmountAsync(senderId, receiverId, balance);
+
+                if (!success)
+                    return BadRequest(new { success = false, message = "Transfer failed. Check account numbers and balance." });
+
                 await _accountService.SaveChanges();
-                return Ok("Transfer Succeeded");
+                return Ok(new { success = true, message = "Transfer succeeded." });
             }
-
-            else
-                return NotFound("Transfer Failed..");
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { success = false, message = "An error occurred during transfer." });
+            }
         }
-
-
-
-
     }
 }

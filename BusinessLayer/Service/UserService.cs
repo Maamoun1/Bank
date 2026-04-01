@@ -1,27 +1,26 @@
 ﻿using BusinessLayer.DTOs.User;
-using BusinessLayer.Global_Class;
+using BusinessLayer.Security;
 using BusinessLayer.Service.IService;
 using DataAccessLayer.Entities;
 using DataAccessLayer.Respository.IRepository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLayer.Service
 {
-    public class UserService : GenericService<TbUser>, IUserService, IReadOnlyRepostitory<TbUser>
+    public class UserService : GenericService<TbUser>, IUserService
     {
-
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IReadOnlyRepostitory<TbUser> _readOnlyRepository;
+        private readonly IPasswordHasher _passwordHasher;
 
-        private readonly IReadOnlyRepostitory<TbUser> _ReadOnlyRepository;
-
-        public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork,IReadOnlyRepostitory<TbUser> ReadOnlyRepository) : base(userRepository)
+        public UserService(
+            IUserRepository userRepository,
+            IUnitOfWork unitOfWork,
+            IReadOnlyRepostitory<TbUser> readOnlyRepository,
+            IPasswordHasher passwordHasher) : base(userRepository)
         {
             _unitOfWork = unitOfWork;
-            _ReadOnlyRepository = ReadOnlyRepository;
+            _readOnlyRepository = readOnlyRepository;
+            _passwordHasher = passwordHasher;
         }
 
         public async Task Add(CreateUserDto dto)
@@ -29,40 +28,39 @@ namespace BusinessLayer.Service
             var newUser = new TbUser
             {
                 UserName = dto.UserName,
-                Password =Util.Encrypt( dto.Password,Util.GetPublicKey()),
+                Password = _passwordHasher.HashPassword(dto.Password), // BCrypt hash only
                 IsActive = dto.IsActive,
-                PersonId = dto.reterivePersondto.Id
+                PersonId = dto.ReterivePersonDto.Id,
             };
 
             await _unitOfWork.User.AddAsync(newUser);
         }
 
-        public bool IsUserExist(int UserId)
-        {
-            return (_unitOfWork.User.IsUserExist(UserId));
-
-        }
-
         public async Task Update(int userId, UpdateUserDto dto)
         {
-            var userFromDb = await _unitOfWork.User.GetAsync(u => u.UserId == userId);
+            var userFromDb = await _unitOfWork.User.GetAsync(
+                u => u.UserId == userId,
+                includeProperties: null,
+                tracked: true);
 
-            if (userFromDb != null)
-            {
+            if (userFromDb == null)
+                throw new KeyNotFoundException($"User with ID {userId} was not found.");
 
-                userFromDb.UserName = dto.UserName;
-                userFromDb.Password =Util.Encrypt( dto.Password,Util.GetPublicKey()); 
-                userFromDb.IsActive = dto.IsActive;
+            userFromDb.UserName = dto.UserName;
+            userFromDb.Password = _passwordHasher.HashPassword(dto.Password); // BCrypt hash only
+            userFromDb.IsActive = dto.IsActive;
 
-                _unitOfWork.User.Update(userFromDb);
-            }
+            _unitOfWork.User.Update(userFromDb);
+        }
+
+        public bool IsUserExist(int userId)
+        {
+            return _unitOfWork.User.IsUserExist(userId);
         }
 
         public Task<IEnumerable<TbUser>> GetAllAsync()
         {
-            return _ReadOnlyRepository.GetAllAsync();
+            return _readOnlyRepository.GetAllAsync();
         }
-
-
     }
 }

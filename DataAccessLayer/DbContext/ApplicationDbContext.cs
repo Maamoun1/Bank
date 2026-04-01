@@ -62,7 +62,7 @@ public partial class ApplicationDbContext : Microsoft.EntityFrameworkCore.DbCont
             entity.Property(e => e.ExpirationDate).HasColumnType("datetime");
             entity.Property(e => e.IssueDate).HasColumnType("datetime");
             entity.Property(e => e.IssueReason).HasMaxLength(50);
-            entity.Property(e => e.Password).HasColumnType("NVARCHAR(MAX)");
+            entity.Property(e => e.PinHash).HasColumnType("NVARCHAR(MAX)").IsRequired();
             entity.Property(e => e.AccountNumber).HasMaxLength(40);
             entity.HasOne(d => d.Application).WithMany(p => p.Accounts)
                 .HasForeignKey(d => d.ApplicationId)

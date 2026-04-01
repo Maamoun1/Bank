@@ -1,21 +1,23 @@
 ﻿using BusinessLayer.DTOs.People;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BusinessLayer.DTOs.User
 {
     public class CreateUserDto
     {
 
-        public ReterivePersonDto reterivePersondto { get; set; }
-        public string UserName { get; set; }
+        [Required]
+        public ReterivePersonDto ReterivePersonDto { get; set; } = null!;
 
-        public string Password { get; set; }
+        [Required(ErrorMessage = "Username is required.")]
+        [MaxLength(30, ErrorMessage = "Username cannot exceed 30 characters.")]
+        public string UserName { get; set; } = null!;
+
+  
+        [Required(ErrorMessage = "Password is required.")]
+        [MinLength(8, ErrorMessage = "Password must be at least 8 characters.")]
+        public string Password { get; set; } = null!;
 
         public bool IsActive { get; set; }
-
     }
 }
