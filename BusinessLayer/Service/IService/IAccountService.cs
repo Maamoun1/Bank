@@ -15,12 +15,12 @@ namespace BusinessLayer.Service.IService
 
         Task<bool> IsAccountExistAsync(string accountNumber);
 
-        Task DepositeAsync(string accountNumber, double balance);
+        Task DepositeAsync(string accountNumber, decimal balance);
 
-        Task WithdrawAsync(string accountNumber, double balance);
+        Task WithdrawAsync(string accountNumber, decimal balance);
 
         Task<double> GetBalanceAsync(string accountNumber);
 
-        Task<bool> TransferAmountAsync(string senderId, string receiverId, double amount);
+        Task<bool> TransferAmountAsync(string senderId, string receiverId, decimal amount);
     }
 }

@@ -12,7 +12,7 @@ namespace BusinessLayer.DTOs.Accounts
 
         public string ClientName {  get; set; }
         public string IssueReason {  get; set; }
-        public double Balance {  get; set; }
+        public decimal Balance {  get; set; }
         public bool IsActive { get; set; }
     }
 }

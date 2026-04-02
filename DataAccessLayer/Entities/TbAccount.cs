@@ -21,7 +21,7 @@ public  class TbAccount
 
     public string IssueReason { get; set; } = null!;
 
-    public double Balance { get; set; }
+    public decimal Balance { get; set; }
 
     public bool IsActive { get; set; }
 

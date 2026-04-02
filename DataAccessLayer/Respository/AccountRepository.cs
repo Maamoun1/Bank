@@ -22,7 +22,7 @@ namespace DataAccessLayer.Respository
             throw new NotImplementedException();
         }
 
-        public  async Task DepositeAsync(string accountNumber, double balance)
+        public  async Task DepositeAsync(string accountNumber, decimal balance)
         {
 
             var account =  await _context.Accounts.SingleOrDefaultAsync(p => p.AccountNumber == accountNumber);
@@ -51,7 +51,7 @@ namespace DataAccessLayer.Respository
             return await _context.Accounts.AnyAsync(a => a.AccountNumber == pinCode);
         }
 
-        public async Task<bool> TransferAmountAsync(string senderId, string receviedId, double amount)
+        public async Task<bool> TransferAmountAsync(string senderId, string receviedId, decimal amount)
         {
 
             using var transaction = await _context.Database.BeginTransactionAsync();
@@ -97,10 +97,20 @@ namespace DataAccessLayer.Respository
             _context.Update(account);
         }
 
-        public async Task WithdrawAsync(string accountNumber, double balance)
+        public async Task WithdrawAsync(string accountNumber, decimal balance)
         {
 
-            await DepositeAsync(accountNumber, balance * -1);
+            var account = await _context.Accounts
+        .SingleOrDefaultAsync(p => p.AccountNumber == accountNumber);
+
+            if (account == null)
+                throw new Exception($"Account not found: {accountNumber}");
+
+            if (account.Balance < balance)
+                throw new InvalidOperationException("Insufficient funds.");
+
+            account.Balance -= balance;
+
         }
     }
 }

@@ -19,12 +19,6 @@ namespace ApiBank.Controllers.User
             _authorizationService = authorizationService;
         }
 
-        // -------------------------------------------------------------------
-        // GET ALL  (Admin only)
-        // Fixed: was [Authorize("Roles=Admin")] — wrong syntax, treated as a
-        // non-existent policy name so the role check never ran.
-        // -------------------------------------------------------------------
-
         [Authorize(Roles = "Admin")]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()

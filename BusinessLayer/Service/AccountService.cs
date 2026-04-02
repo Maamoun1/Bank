@@ -104,7 +104,7 @@ namespace BusinessLayer.Service
             return balance.Value;
         }
 
-        public async Task DepositeAsync(string accountNumber, double balance)
+        public async Task DepositeAsync(string accountNumber, decimal balance)
         {
             if (balance < 100)
                 throw new ArgumentException("Deposit amount must be at least 100.");
@@ -118,7 +118,7 @@ namespace BusinessLayer.Service
             await _cache.RemoveAsync(CacheKeys.Balance(accountNumber));
         }
 
-        public async Task WithdrawAsync(string accountNumber, double balance)
+        public async Task WithdrawAsync(string accountNumber, decimal balance)
         {
             if (balance < 100)
                 throw new ArgumentException("Withdrawal amount must be at least 100.");
@@ -133,7 +133,7 @@ namespace BusinessLayer.Service
         }
 
 
-        public async Task<bool> TransferAmountAsync(string senderId, string receiverId, double amount)
+        public async Task<bool> TransferAmountAsync(string senderId, string receiverId, decimal amount)
         {
             if (amount <= 0)
                 throw new ArgumentException("Transfer amount must be greater than zero.");

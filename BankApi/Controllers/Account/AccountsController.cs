@@ -147,7 +147,7 @@ namespace ApiBank.Controllers.Account
         }
 
         [HttpPut("Deposit")]
-        public async Task<IActionResult> Deposit(string accountNumber, double balance)
+        public async Task<IActionResult> Deposit(string accountNumber, decimal balance)
         {
             if (string.IsNullOrWhiteSpace(accountNumber))
                 return BadRequest(new { success = false, message = "Account number is required." });
@@ -172,7 +172,7 @@ namespace ApiBank.Controllers.Account
         }
 
         [HttpPut("Withdraw")]
-        public async Task<IActionResult> Withdraw(string accountNumber, double balance)
+        public async Task<IActionResult> Withdraw(string accountNumber, decimal balance)
         {
             if (string.IsNullOrWhiteSpace(accountNumber))
                 return BadRequest(new { success = false, message = "Account number is required." });
@@ -198,7 +198,7 @@ namespace ApiBank.Controllers.Account
 
 
         [HttpPut("Transfer")]
-        public async Task<IActionResult> TransferAmount(string senderId, string receiverId, double balance)
+        public async Task<IActionResult> TransferAmount(string senderId, string receiverId, decimal balance)
         {
             try
             {

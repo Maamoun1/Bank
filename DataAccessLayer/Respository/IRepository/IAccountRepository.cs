@@ -13,12 +13,12 @@ namespace DataAccessLayer.Respository.IRepository
        Task <bool> IsAccountExist(string pinCode);
         void Update(TbAccount account);
 
-        Task DepositeAsync(string accountNumber, double balance);
-        Task WithdrawAsync(string accountNumber, double balance);
+        Task DepositeAsync(string accountNumber, decimal balance);
+        Task WithdrawAsync(string accountNumber, decimal balance);
 
         Task<double?> GetBalanceAsync(string accountNumber);
 
-        Task<bool> TransferAmountAsync(string senderId, string receviedId, double amount);
+        Task<bool> TransferAmountAsync(string senderId, string receviedId, decimal amount);
 
     }
 }
