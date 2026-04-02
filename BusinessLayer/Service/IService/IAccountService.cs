@@ -19,7 +19,7 @@ namespace BusinessLayer.Service.IService
 
         Task WithdrawAsync(string accountNumber, decimal balance);
 
-        Task<double> GetBalanceAsync(string accountNumber);
+        Task<decimal> GetBalanceAsync(string accountNumber);
 
         Task<bool> TransferAmountAsync(string senderId, string receiverId, decimal amount);
     }

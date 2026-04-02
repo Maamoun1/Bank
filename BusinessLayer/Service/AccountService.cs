@@ -12,24 +12,25 @@ namespace BusinessLayer.Service
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICacheService _cache;
         private readonly IPasswordHasher _passwordHasher;
+        private readonly IDistributedLock _distributedLock;
+
+        private static readonly TimeSpan LockExpiry = TimeSpan.FromSeconds(10);
 
         public AccountService(
             IAccountRepository accountRepository,
             IUnitOfWork unitOfWork,
             ICacheService cache,
-            IPasswordHasher passwordHasher) : base(accountRepository)
+            IPasswordHasher passwordHasher,
+            IDistributedLock distributedLock) : base(accountRepository)
         {
             _unitOfWork = unitOfWork;
             _cache = cache;
             _passwordHasher = passwordHasher;
+            _distributedLock = distributedLock;
         }
 
         public async Task AddAccount(CreateAccountDto dto)
         {
-            // Caller provides a PIN or the service generates one.
-            // Either way only the BCrypt hash is persisted — plaintext is
-            // discarded after hashing and must be given to the client via
-            // a secure out-of-band channel by the calling layer.
             var plainPin = string.IsNullOrWhiteSpace(dto.InitialPin)
                 ? GenerateRandomPin()
                 : dto.InitialPin;
@@ -56,7 +57,6 @@ namespace BusinessLayer.Service
             if (string.IsNullOrWhiteSpace(accountNumber) || string.IsNullOrWhiteSpace(submittedPin))
                 return false;
 
-            // tracked: true so EF returns the live entity with PinHash populated.
             var account = await _unitOfWork.Account.GetAsync(
                 a => a.AccountNumber == accountNumber,
                 includeProperties: null,
@@ -85,12 +85,12 @@ namespace BusinessLayer.Service
             _unitOfWork.Account.Update(account);
         }
 
- 
-        public async Task<double> GetBalanceAsync(string accountNumber)
+
+        public async Task<decimal> GetBalanceAsync(string accountNumber)
         {
             var cacheKey = CacheKeys.Balance(accountNumber);
 
-            var cachedBalance = await _cache.GetAsync<double?>(cacheKey);
+            var cachedBalance = await _cache.GetAsync<decimal?>(cacheKey);
             if (cachedBalance != null)
                 return cachedBalance.Value;
 
@@ -120,19 +120,51 @@ namespace BusinessLayer.Service
 
         public async Task WithdrawAsync(string accountNumber, decimal balance)
         {
+
             if (balance < 100)
                 throw new ArgumentException("Withdrawal amount must be at least 100.");
 
             if (!await IsAccountExistAsync(accountNumber))
                 throw new KeyNotFoundException($"Account '{accountNumber}' was not found.");
 
-            await _unitOfWork.Account.WithdrawAsync(accountNumber, balance);
-            await _unitOfWork.SaveAsync();
+   
+            var lockKey = $"lock:withdraw:{accountNumber}";
+            var token = await _distributedLock.AcquireAsync(lockKey, LockExpiry);
 
-            await _cache.RemoveAsync(CacheKeys.Balance(accountNumber));
+            if (token is null)
+            {
+                throw new InvalidOperationException(
+                    $"Account '{accountNumber}' is currently being processed. " +
+                    "Please try again in a moment.");
+            }
+
+            try
+            {
+         
+                var currentBalance = await _unitOfWork.Account.GetBalanceAsync(accountNumber);
+
+                if (currentBalance is null)
+                    throw new KeyNotFoundException($"Account '{accountNumber}' was not found.");
+
+                if (currentBalance.Value < balance)
+                    throw new InvalidOperationException(
+                        $"Insufficient funds. Available: {currentBalance.Value}, Requested: {balance}.");
+
+                // Deduct from database
+                await _unitOfWork.Account.WithdrawAsync(accountNumber, balance);
+                await _unitOfWork.SaveAsync();
+
+                // Invalidate cached balance — next GetBalance call hits the DB
+                await _cache.RemoveAsync(CacheKeys.Balance(accountNumber));
+            }
+            finally
+            {
+
+                await _distributedLock.ReleaseAsync(lockKey, token);
+            }
         }
 
-
+  
         public async Task<bool> TransferAmountAsync(string senderId, string receiverId, decimal amount)
         {
             if (amount <= 0)
@@ -140,6 +172,7 @@ namespace BusinessLayer.Service
 
             return await _unitOfWork.Account.TransferAmountAsync(senderId, receiverId, amount);
         }
+
 
         public async Task<bool> IsAccountExistAsync(string accountNumber)
         {
@@ -151,13 +184,12 @@ namespace BusinessLayer.Service
             throw new NotImplementedException();
         }
 
-
+  
         private static string GenerateRandomPin(int length = 6)
         {
             var rng = System.Security.Cryptography.RandomNumberGenerator.Create();
             var bytes = new byte[length];
             rng.GetBytes(bytes);
-            // Map each byte to a digit 0-9
             return string.Concat(bytes.Select(b => (b % 10).ToString()));
         }
     }

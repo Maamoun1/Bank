@@ -16,7 +16,7 @@ namespace DataAccessLayer.Respository.IRepository
         Task DepositeAsync(string accountNumber, decimal balance);
         Task WithdrawAsync(string accountNumber, decimal balance);
 
-        Task<double?> GetBalanceAsync(string accountNumber);
+        Task<decimal?> GetBalanceAsync(string accountNumber);
 
         Task<bool> TransferAmountAsync(string senderId, string receviedId, decimal amount);
 

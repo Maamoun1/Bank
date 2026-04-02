@@ -1,19 +1,21 @@
 ﻿using ApiBank.Helpers;
-using BusinessLayer.Security;
-using DataAccessLayer.Entities;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Authorization;
 using BusinessLayer.Authentication.Services;
 using BusinessLayer.Authorization.Handlers;
-using BusinessLayer.Tokens.Service;
 using BusinessLayer.Authorization.Requirements;
-using Microsoft.AspNetCore.RateLimiting;
-using System.Threading.RateLimiting;
-using InfrastructureLayer.Caching;
+using BusinessLayer.Security;
 using BusinessLayer.Service.IService;
+using BusinessLayer.Tokens.Service;
+using DataAccessLayer.Entities;
+using InfrastructureLayer.Caching;
+using InfrastructureLayer.Locking;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
+using System.Text;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +34,16 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.InstanceName = builder.Configuration["Redis:InstanceName"];
 });
 
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+    var connectionString = builder.Configuration["Redis:ConnectionString"]
+        ?? throw new InvalidOperationException(
+            "Redis:ConnectionString is not configured.");
+
+    return ConnectionMultiplexer.Connect(connectionString);
+});
+
+builder.Services.AddScoped<IDistributedLock, RedisDistributedLock>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -116,7 +128,7 @@ builder.Services.AddRateLimiter(options =>
         });
     };
 });
-
+    
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {

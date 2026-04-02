@@ -170,7 +170,6 @@ namespace ApiBank.Controllers.Account
                 return StatusCode(500, new { success = false, message = "An error occurred during deposit." });
             }
         }
-
         [HttpPut("Withdraw")]
         public async Task<IActionResult> Withdraw(string accountNumber, decimal balance)
         {
@@ -182,6 +181,7 @@ namespace ApiBank.Controllers.Account
                 await _accountService.WithdrawAsync(accountNumber, balance);
                 return Ok(new { success = true, message = "Withdrawal successful." });
             }
+
             catch (ArgumentException ex)
             {
                 return BadRequest(new { success = false, message = ex.Message });
@@ -189,6 +189,21 @@ namespace ApiBank.Controllers.Account
             catch (KeyNotFoundException ex)
             {
                 return NotFound(new { success = false, message = ex.Message });
+            }
+            catch (InvalidOperationException ex) when (ex.Message.Contains("currently being processed"))
+            {
+      
+                return Conflict(new
+                {
+                    success = false,
+                    message = ex.Message,
+                    retryAfterMs = 200
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+              
+                return UnprocessableEntity(new { success = false, message = ex.Message });
             }
             catch (Exception)
             {

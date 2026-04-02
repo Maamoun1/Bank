@@ -35,13 +35,13 @@ namespace DataAccessLayer.Respository
                throw new Exception($"not found accountNumber with {accountNumber}");
         }
 
-        public async Task<double?> GetBalanceAsync(string accountNumber)
+        public async Task<decimal?> GetBalanceAsync(string accountNumber)
         {
 
             return await _context.Accounts
                 .AsNoTracking()
                 .Where(a => a.AccountNumber == accountNumber)
-                .Select(a => (double?)a.Balance)
+                .Select(a => (decimal?)a.Balance)
                 .FirstOrDefaultAsync();
 
         }
