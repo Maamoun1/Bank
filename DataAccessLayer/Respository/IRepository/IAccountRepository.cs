@@ -18,7 +18,7 @@ namespace DataAccessLayer.Respository.IRepository
 
         Task<decimal?> GetBalanceAsync(string accountNumber);
 
-        Task<bool> TransferAmountAsync(string senderId, string receviedId, decimal amount);
+        Task TransferAmountAsync(string senderId, string receiverId, decimal amount);
 
     }
 }

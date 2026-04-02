@@ -14,7 +14,11 @@ namespace BusinessLayer.Service
         private readonly IPasswordHasher _passwordHasher;
         private readonly IDistributedLock _distributedLock;
 
-        private static readonly TimeSpan LockExpiry = TimeSpan.FromSeconds(10);
+
+        private static readonly TimeSpan WithdrawLockExpiry = TimeSpan.FromSeconds(10);
+
+
+        private static readonly TimeSpan TransferLockExpiry = TimeSpan.FromSeconds(15);
 
         public AccountService(
             IAccountRepository accountRepository,
@@ -29,6 +33,7 @@ namespace BusinessLayer.Service
             _distributedLock = distributedLock;
         }
 
+ 
         public async Task AddAccount(CreateAccountDto dto)
         {
             var plainPin = string.IsNullOrWhiteSpace(dto.InitialPin)
@@ -51,6 +56,7 @@ namespace BusinessLayer.Service
 
             await _unitOfWork.Account.AddAsync(newAccount);
         }
+
 
         public async Task<bool> VerifyPinAsync(string accountNumber, string submittedPin)
         {
@@ -118,29 +124,29 @@ namespace BusinessLayer.Service
             await _cache.RemoveAsync(CacheKeys.Balance(accountNumber));
         }
 
+        // -----------------------------------------------------------------------
+        // WITHDRAW — single-account Redis lock
+        // -----------------------------------------------------------------------
+
         public async Task WithdrawAsync(string accountNumber, decimal balance)
         {
-
             if (balance < 100)
                 throw new ArgumentException("Withdrawal amount must be at least 100.");
 
             if (!await IsAccountExistAsync(accountNumber))
                 throw new KeyNotFoundException($"Account '{accountNumber}' was not found.");
 
-   
-            var lockKey = $"lock:withdraw:{accountNumber}";
-            var token = await _distributedLock.AcquireAsync(lockKey, LockExpiry);
+            var lockKey = $"lock:account:{accountNumber}";
+            var token = await _distributedLock.AcquireAsync(lockKey, WithdrawLockExpiry);
 
             if (token is null)
-            {
                 throw new InvalidOperationException(
                     $"Account '{accountNumber}' is currently being processed. " +
                     "Please try again in a moment.");
-            }
 
             try
             {
-         
+            
                 var currentBalance = await _unitOfWork.Account.GetBalanceAsync(accountNumber);
 
                 if (currentBalance is null)
@@ -150,11 +156,9 @@ namespace BusinessLayer.Service
                     throw new InvalidOperationException(
                         $"Insufficient funds. Available: {currentBalance.Value}, Requested: {balance}.");
 
-                // Deduct from database
                 await _unitOfWork.Account.WithdrawAsync(accountNumber, balance);
                 await _unitOfWork.SaveAsync();
 
-                // Invalidate cached balance — next GetBalance call hits the DB
                 await _cache.RemoveAsync(CacheKeys.Balance(accountNumber));
             }
             finally
@@ -164,16 +168,84 @@ namespace BusinessLayer.Service
             }
         }
 
-  
-        public async Task<bool> TransferAmountAsync(string senderId, string receiverId, decimal amount)
+        // -----------------------------------------------------------------------
+        // TRANSFER — dual-account Redis lock with deadlock prevention
+        // -----------------------------------------------------------------------
+
+        public async Task TransferAsync(string senderId, string receiverId, decimal amount)
         {
+            // --- Input validation -----------------------------------------------
+
             if (amount <= 0)
                 throw new ArgumentException("Transfer amount must be greater than zero.");
 
-            return await _unitOfWork.Account.TransferAmountAsync(senderId, receiverId, amount);
+            if (senderId == receiverId)
+                throw new ArgumentException("Sender and receiver accounts must be different.");
+
+            if (!await IsAccountExistAsync(senderId))
+                throw new KeyNotFoundException($"Sender account '{senderId}' was not found.");
+
+            if (!await IsAccountExistAsync(receiverId))
+                throw new KeyNotFoundException($"Receiver account '{receiverId}' was not found.");
+
+
+            var lockKeys = new[] { senderId, receiverId }
+                .OrderBy(id => id, StringComparer.Ordinal)
+                .ToArray();
+
+            var firstKey = $"lock:account:{lockKeys[0]}";
+            var secondKey = $"lock:account:{lockKeys[1]}";
+
+            string? firstToken = null;
+            string? secondToken = null;
+
+            try
+            {
+
+                firstToken = await _distributedLock.AcquireAsync(firstKey, TransferLockExpiry);
+
+                if (firstToken is null)
+                    throw new InvalidOperationException(
+                        $"Account '{lockKeys[0]}' is currently being processed. " +
+                        "Please try again in a moment.");
+
+
+                secondToken = await _distributedLock.AcquireAsync(secondKey, TransferLockExpiry);
+
+                if (secondToken is null)
+                    throw new InvalidOperationException(
+                        $"Account '{lockKeys[1]}' is currently being processed. " +
+                        "Please try again in a moment.");
+
+                var senderBalance = await _unitOfWork.Account.GetBalanceAsync(senderId);
+
+                if (senderBalance is null)
+                    throw new KeyNotFoundException($"Sender account '{senderId}' was not found.");
+
+                if (senderBalance.Value < amount)
+                    throw new InvalidOperationException(
+                        $"Insufficient funds. Available: {senderBalance.Value}, Requested: {amount}.");
+
+                await _unitOfWork.Account.TransferAmountAsync(senderId, receiverId, amount);
+
+                // Invalidate cached balances for both accounts.
+                // The next GetBalance call on either account will go to the DB.
+                await _cache.RemoveAsync(CacheKeys.Balance(senderId));
+                await _cache.RemoveAsync(CacheKeys.Balance(receiverId));
+            }
+            finally
+            {
+
+
+                if (secondToken is not null)
+                    await _distributedLock.ReleaseAsync(secondKey, secondToken);
+
+                if (firstToken is not null)
+                    await _distributedLock.ReleaseAsync(firstKey, firstToken);
+            }
         }
 
-
+    
         public async Task<bool> IsAccountExistAsync(string accountNumber)
         {
             return await _unitOfWork.Account.IsAccountExist(accountNumber);
@@ -184,7 +256,7 @@ namespace BusinessLayer.Service
             throw new NotImplementedException();
         }
 
-  
+
         private static string GenerateRandomPin(int length = 6)
         {
             var rng = System.Security.Cryptography.RandomNumberGenerator.Create();

@@ -51,7 +51,7 @@ namespace DataAccessLayer.Respository
             return await _context.Accounts.AnyAsync(a => a.AccountNumber == pinCode);
         }
 
-        public async Task<bool> TransferAmountAsync(string senderId, string receviedId, decimal amount)
+        public async Task TransferAmountAsync(string senderId, string receviedId, decimal amount)
         {
 
             using var transaction = await _context.Database.BeginTransactionAsync();
@@ -61,33 +61,32 @@ namespace DataAccessLayer.Respository
                 var recevier = await _context.Accounts.FirstOrDefaultAsync(a => a.AccountNumber == receviedId);
 
                 if (sender == null || recevier == null)
-                    throw new Exception("one or both account not found.");
+                    throw new KeyNotFoundException("One or both accounts were not found.");
+
 
                 if (sender.Balance < amount)
-                    throw new Exception("Insufficient funds.");
+                    throw new InvalidOperationException(
+                        $"Insufficient funds. Available: {sender.Balance}, Requested: {amount}.");
 
-                //Deduct from sender
                 sender.Balance -= amount;
-                _context.Accounts.Update(sender);
-
-                //Add to receiver
                 recevier.Balance += amount;
+
+
+                _context.Accounts.Update(sender);
                 _context.Accounts.Update(recevier);
 
                 //save changed
                 await _context.SaveChangesAsync();
-
-                //commit transaction
                 await transaction.CommitAsync();
-                return true;
+
             }
 
             catch (Exception ex)
             {
                 // Rollback if anything goes wrong
                 await transaction.RollbackAsync();
-                Console.WriteLine($"Transaction failed: {ex.Message}");
-                return false;
+                throw;
+              //  return false;
             }
 
         }
@@ -96,6 +95,7 @@ namespace DataAccessLayer.Respository
         {
             _context.Update(account);
         }
+
 
         public async Task WithdrawAsync(string accountNumber, decimal balance)
         {

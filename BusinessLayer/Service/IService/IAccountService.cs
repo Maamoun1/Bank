@@ -21,6 +21,6 @@ namespace BusinessLayer.Service.IService
 
         Task<decimal> GetBalanceAsync(string accountNumber);
 
-        Task<bool> TransferAmountAsync(string senderId, string receiverId, decimal amount);
+        Task TransferAsync(string senderId, string receiverId, decimal amount);
     }
 }

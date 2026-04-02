@@ -63,6 +63,7 @@ namespace ApiBank.Controllers.Account
             }
         }
 
+
         [HttpGet("GetBalance/{accountNumber}", Name = "GetBalance")]
         public async Task<IActionResult> GetBalance(string accountNumber)
         {
@@ -100,6 +101,7 @@ namespace ApiBank.Controllers.Account
             });
         }
 
+   
         [HttpPost("VerifyPin", Name = "VerifyPin")]
         public async Task<IActionResult> VerifyPin([FromBody] VerifyPinDto dto)
         {
@@ -137,7 +139,6 @@ namespace ApiBank.Controllers.Account
             }
             catch (InvalidOperationException ex)
             {
-                // Wrong current PIN — return 401 so callers know it's an auth failure
                 return Unauthorized(new { success = false, message = ex.Message });
             }
             catch (Exception)
@@ -145,6 +146,7 @@ namespace ApiBank.Controllers.Account
                 return StatusCode(500, new { success = false, message = "An error occurred while changing the PIN." });
             }
         }
+
 
         [HttpPut("Deposit")]
         public async Task<IActionResult> Deposit(string accountNumber, decimal balance)
@@ -170,6 +172,8 @@ namespace ApiBank.Controllers.Account
                 return StatusCode(500, new { success = false, message = "An error occurred during deposit." });
             }
         }
+
+    
         [HttpPut("Withdraw")]
         public async Task<IActionResult> Withdraw(string accountNumber, decimal balance)
         {
@@ -181,7 +185,6 @@ namespace ApiBank.Controllers.Account
                 await _accountService.WithdrawAsync(accountNumber, balance);
                 return Ok(new { success = true, message = "Withdrawal successful." });
             }
-
             catch (ArgumentException ex)
             {
                 return BadRequest(new { success = false, message = ex.Message });
@@ -192,17 +195,12 @@ namespace ApiBank.Controllers.Account
             }
             catch (InvalidOperationException ex) when (ex.Message.Contains("currently being processed"))
             {
-      
-                return Conflict(new
-                {
-                    success = false,
-                    message = ex.Message,
-                    retryAfterMs = 200
-                });
+                // Lock contention — signal the client to retry
+                return Conflict(new { success = false, message = ex.Message, retryAfterMs = 200 });
             }
             catch (InvalidOperationException ex)
             {
-              
+                // Insufficient funds or inactive account
                 return UnprocessableEntity(new { success = false, message = ex.Message });
             }
             catch (Exception)
@@ -211,23 +209,55 @@ namespace ApiBank.Controllers.Account
             }
         }
 
+        // -------------------------------------------------------------------
+        // TRANSFER
+        //
+        // Calls TransferAsync — dual Redis locks, deterministic order,
+        // balance check inside the lock, SQL transaction for atomicity.
+        //
+        // HTTP status mapping:
+        //   ArgumentException        → 400 Bad Request
+        //   KeyNotFoundException     → 404 Not Found
+        //   InvalidOperationException (lock contention) → 409 Conflict
+        //   InvalidOperationException (insufficient funds) → 422 Unprocessable
+        //   Any other exception      → 500 Internal Server Error
+        // -------------------------------------------------------------------
 
-        [HttpPut("Transfer")]
-        public async Task<IActionResult> TransferAmount(string senderId, string receiverId, decimal balance)
+        [HttpPost("Transfer")]
+        public async Task<IActionResult> Transfer([FromBody] TransferRequestDto dto)
         {
+            if (dto == null)
+                return BadRequest(new { success = false, message = "Invalid request body." });
+
             try
             {
-                var success = await _accountService.TransferAmountAsync(senderId, receiverId, balance);
-
-                if (!success)
-                    return BadRequest(new { success = false, message = "Transfer failed. Check account numbers and balance." });
-
-                await _accountService.SaveChanges();
+                await _accountService.TransferAsync(dto.SenderId, dto.ReceiverId, dto.Amount);
                 return Ok(new { success = true, message = "Transfer succeeded." });
             }
             catch (ArgumentException ex)
             {
                 return BadRequest(new { success = false, message = ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { success = false, message = ex.Message });
+            }
+            catch (InvalidOperationException ex) when (ex.Message.Contains("currently being processed"))
+            {
+                // One or both accounts are locked by another concurrent request.
+                // 409 Conflict — the client should retry after a short delay.
+                return Conflict(new
+                {
+                    success = false,
+                    message = ex.Message,
+                    retryAfterMs = 300
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Insufficient funds or same-account transfer.
+                // 422 Unprocessable — valid request, failed business rule.
+                return UnprocessableEntity(new { success = false, message = ex.Message });
             }
             catch (Exception)
             {
